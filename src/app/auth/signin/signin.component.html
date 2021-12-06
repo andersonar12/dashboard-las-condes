@@ -1,3 +1,42 @@
-<p>signin works!</p> 
+<div class="background h-100">
+    <div class="container h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100 ">
+            <div class="col-4 text-center ">
+                <img src="assets/images/Grupo 1666.svg" alt="" class="mb-4" width="400px" srcset="">
 
-<button mat-raised-button color="primary" routerLink="/pages/first-page">Ir a First Page</button>
+                <div class="row d-flex justify-content-center">
+                    <div class="col-10">
+                        <p class="mb-4 text-black"> <strong>Plataforma de monitoreo para rutas y aforo en buses</strong> </p>
+
+                        <form [formGroup]="formGroup" class="mb-4">
+    
+                          
+                            <mat-form-field appearance="fill" class="w-100">
+                              <mat-label class="" style="font-size: 20px;" >Correo Electronico</mat-label>
+                              <input formControlName="email" matInput type="email" placeholder="" required>
+                              <mat-icon class="text-black" matPrefix >account_circle</mat-icon>
+                            </mat-form-field>
+              
+                            <mat-form-field appearance="fill" class="w-100 mb-4">
+                              <mat-label class="" style="font-size: 20px;"  >Contraseña</mat-label>
+                              <input formControlName="password" matInput type="password"  placeholder="" required>
+                              <mat-icon class="text-black" matPrefix >lock</mat-icon>
+                            </mat-form-field>
+      
+
+                            <button type="button" [disabled]="formGroup.invalid"class="btn btn-main ps-5 pe-5 pt-2 pb-2" (click)="signIn()"><p class="mb-0 text-white" style="font-size: 19px;"><strong>Iniciar Sesión</strong> </p></button>
+
+                            
+                        </form>
+                        <a href="javascript:void(0)" class="text-black" >¿Olvidaste la contraseña?</a>
+                        <br>
+                        <br>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

@@ -1,4 +1,58 @@
 /* You can add global styles to this file, and also import other style files */
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+h1,h2,h3,h4,h5{
+    font-family: 'SF Pro Display Bold'!important;
+    font-weight: normal!important;
+  }
+  
+  strong{
+    font-family: 'SF Pro Display Bold'!important;
+    font-weight: normal!important; 
+  }
+  
+  p{
+    font-family: 'SF Pro Display Regular'!important;
+    font-weight: normal!important;
+    font-size: 24px;
+  }
+  
+  a{
+    font-family: 'SF Pro Display Regular'!important;
+    font-weight: normal!important;
+    text-decoration: none;
+  }
+
+  span{
+    font-family: 'SF Pro Display Regular'!important;
+    font-weight: normal!important;
+  }
+
+
+.text-black{
+  color: black;
+}
+
+
+
+.btn-main{
+  background: linear-gradient(87deg, rgba(233,154,71,1) 0%, rgba(221,118,74,1) 50%, rgba(209,76,78,1) 100%);
+  border-radius: 30px;
+  border: 1px solid rgba(209,76,78,1);
+  box-shadow: 0px 0px 35px -11px #000000;
+}
+
+.btn-navbar{ 
+  background:transparent;
+  border-radius: 30px;
+}
+
+.btn-navbar:hover{
+  background: linear-gradient(90deg, rgba(238,22,72,1) 0%, rgba(230,15,95,1) 100%);
+  cursor: pointer;
+}
+
+.nav-active{
+  background: linear-gradient(90deg, rgba(238,22,72,1) 0%, rgba(230,15,95,1) 100%);
+}

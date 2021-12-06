@@ -5,7 +5,7 @@ import { PagesComponent } from './pages.component';
 import { PagesRoutes } from './pages.routing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FirstPageComponent } from './first-page/first-page.component';
+import { HomeComponent } from './home/home.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,10 +17,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
-
+import { StatisticsComponent } from './statistics/statistics.component';
+import { AgmCoreModule } from '@agm/core';
 const Components = [
   PagesComponent,
-  FirstPageComponent
+  HomeComponent,
+  StatisticsComponent
 ];
 
 
@@ -42,6 +44,7 @@ const Components = [
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    AgmCoreModule.forRoot({ apiKey: 'AIzaSyDQB3QcRFQSQFoJSubx4AvoQl5_QYohIkg' }),
     RouterModule.forChild(PagesRoutes)
   ],
 })

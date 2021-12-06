@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <radialGradient id="radial-gradient" cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#09ff84"/>
+      <stop offset="1" stop-color="#09ff73" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g id="Componente_10_43" data-name="Componente 10 – 43" transform="translate(15 15)">
+    <g id="Grupo_1726" data-name="Grupo 1726" transform="translate(-769.667 -426.667)">
+      <circle id="Elipse_3" data-name="Elipse 3" cx="45" cy="45" r="45" transform="translate(769.667 426.667)" fill="url(#radial-gradient)"/>
+      <circle id="Elipse_2" data-name="Elipse 2" cx="9" cy="9" r="9" transform="translate(805.667 462.667)" fill="#00431d"/>
+      <circle id="Elipse_53" data-name="Elipse 53" cx="9" cy="9" r="9" transform="translate(805.667 462.668)" fill="#01559d"/>
+    </g>
+    <g id="Grupo_1611" data-name="Grupo 1611" transform="translate(-895 -315.094)" opacity="0">
+      <path id="Unión_2" data-name="Unión 2" d="M2.056,10.807H5.693L3.874,13Zm3.348,0A5.4,5.4,0,0,1,5.4,0H31.6a5.4,5.4,0,1,1,0,10.807Z" transform="translate(933 331.095)" opacity="0.57"/>
+      <path id="Unión_1" data-name="Unión 1" d="M1.555,8.313H4.307L2.931,10Zm2.6,0A4.157,4.157,0,1,1,4.157,0H23.843a4.157,4.157,0,1,1,0,8.313Z" transform="translate(938 331.095)" fill="#fff"/>
+      <text id="Máquina:_3344_BB-CL-34_" data-name="Máquina: 3344 (BB-CL-34)" transform="translate(942 336.095)" font-size="1" font-family="SFProDisplay-Bold, SF Pro Display" font-weight="700" letter-spacing="0.015em"><tspan x="0" y="0">Máquina:</tspan><tspan y="0" xml:space="preserve" font-family="SFProDisplay-Medium, SF Pro Display" font-weight="500"> 3344 (BB-CL-34)</tspan></text>
+      <text id="Pasajeros:_1.125" data-name="Pasajeros: 1.125" transform="translate(942 336.095)" font-size="1" font-family="SFProDisplay-Bold, SF Pro Display" letter-spacing="0.015em" font-weight="700"><tspan x="0" y="0">Pasajeros:</tspan><tspan y="0" xml:space="preserve" font-family="SFProDisplay-Regular, SF Pro Display" font-weight="400"> 1.125</tspan></text>
+    </g>
+  </g>
+</svg>
