@@ -1,0 +1,29 @@
+mat-icon {
+  cursor: pointer;
+}
+
+th,
+td {
+  font-size: 18px !important;
+  color: #707070 !important;
+}
+
+::ng-deep .mat-dialog-container,
+tr {
+  background-color: #f2f4f4;
+}
+
+.mat-table {
+  background: transparent;
+}
+
+/* .mat-header-row {
+    background-color: white!important;
+    border-radius: 15px;
+} */
+.mat-header-cell {
+  background: white!important;
+}
+.mat-paginator {
+  background: #f2f4f4;
+}

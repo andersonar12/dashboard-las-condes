@@ -1,3 +1,82 @@
 agm-map {
-    height: 48.7vw;
-  }
+  height: 48.7vw;
+}
+
+.header {
+  position: absolute;
+  top: 1%;
+  left: 5%;
+  z-index: 1;
+}
+
+.accordion {
+  border-radius: 10px;
+  width: 435px;
+}
+
+.accordion-button {
+  background-color: transparent !important;
+}
+
+.accordion-item {
+  background: #ffffff8a;
+  opacity: 1 !important;
+  backdrop-filter: blur(10px) !important;
+  border: none;
+}
+
+.accordion-button,
+.accordion-button:not(.collapsed) {
+  box-shadow: none;
+}
+
+.accordion-item:last-of-type {
+  border-bottom-right-radius: 0.5rem !important;
+  border-bottom-left-radius: 0.5rem !important;
+}
+.accordion-item:first-of-type {
+  border-top-left-radius: 0.5rem !important;
+  border-top-right-radius: 0.5rem !important;
+}
+
+.filters {
+  width: 690px;
+  background: #ffffff8a;
+  opacity: 1 !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 0.5rem;
+}
+
+.filters .accordion-item {
+  background: #d9dde0;
+  opacity: 1 !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+::ng-deep.ngx-timepicker-control {
+  width: 40 px !important;
+}
+
+.hover-filters {
+  color: #8656ee !important;
+}
+
+.btn-sidebar {
+  position: absolute;
+  cursor: pointer;
+  top: 65px;
+  right: 18px;
+}
+
+aside{
+  width: 390px!important;
+}
+
+.machine-hover, .machine-items,.btn-close-sidebar{
+  cursor: pointer;
+}
+
+.heath-zone{
+  -webkit-box-shadow: 0px 10px 13px -7px #000000, 0px 0px 39px 33px rgba(255,0,0,0.7); 
+  box-shadow: 0px 10px 13px -7px #000000, 0px 0px 39px 33px rgba(255,0,0,0.7);
+}

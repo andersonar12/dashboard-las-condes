@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { AuthGuard } from './auth.guard';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 
 @NgModule({
@@ -16,9 +18,10 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    MatNativeDateModule,
     HttpClientModule
   ],
-  providers: [AuthGuard],
+  providers: [AuthGuard,{provide: MAT_DATE_LOCALE, useValue: 'es-ES'}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

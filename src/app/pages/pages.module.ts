@@ -17,8 +17,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 import { StatisticsComponent } from './statistics/statistics.component';
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { AgmCoreModule } from '@agm/core';
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
+import { ComponentsModule } from '../components/components.module';
+
+
 const Components = [
   PagesComponent,
   HomeComponent,
@@ -44,6 +51,10 @@ const Components = [
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    MatDatepickerModule,
+    NgxMaterialTimepickerModule,
+    ComponentsModule,
+    NgxEchartsModule.forRoot({ echarts }),
     AgmCoreModule.forRoot({ apiKey: 'AIzaSyDQB3QcRFQSQFoJSubx4AvoQl5_QYohIkg' }),
     RouterModule.forChild(PagesRoutes)
   ],
