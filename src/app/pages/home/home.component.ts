@@ -72,6 +72,12 @@ export class HomeComponent implements OnInit {
 
   showBusStops(){
     this.showBusStopsMarkers = true
+    this.showToogle = true
+  }
+
+  hideBusStops(){
+    this.showBusStopsMarkers=false 
+    this.showToogle = false
   }
 
   public mapReady(map:any) {
