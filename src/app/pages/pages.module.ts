@@ -24,8 +24,7 @@ import { AgmCoreModule } from '@agm/core';
 import { NgxEchartsModule } from 'ngx-echarts';
 import * as echarts from 'echarts';
 import { ComponentsModule } from '../components/components.module';
-
-
+import { environment } from "../../environments/environment";
 const Components = [
   PagesComponent,
   HomeComponent,
@@ -55,7 +54,7 @@ const Components = [
     NgxMaterialTimepickerModule,
     ComponentsModule,
     NgxEchartsModule.forRoot({ echarts }),
-    AgmCoreModule.forRoot({ apiKey: 'AIzaSyDQB3QcRFQSQFoJSubx4AvoQl5_QYohIkg' }),
+    AgmCoreModule.forRoot({ apiKey: environment.APIGoogleMaps }),
     RouterModule.forChild(PagesRoutes)
   ],
 })
