@@ -4,10 +4,16 @@ import { EChartsOption } from 'echarts';
 import { Observable, } from 'rxjs';
 import { map } from 'rxjs/operators';
 import * as echarts from 'echarts';
+import Swal from 'sweetalert2'
+import { environment } from '../../environments/environment';
+import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy } from '../interfaces/interfaces';
+
 @Injectable({
   providedIn: 'root',
 })
 export class ChartsService {
+
+  public contadorApiUrl = environment.contadorApiUrl +'/api/'
   constructor(private http: HttpClient) {}
   
   setOptionsChartsPassengers() {
@@ -179,12 +185,20 @@ export class ChartsService {
     return options;
   }
 
-  setOptionsChartsBoardingAndDisembarkationPassengers() {
+  async setOptionsChartsBoardingPassengers() {
+
+    let data:any
+    
+    await this.getTotalPassengersByTimeToday().toPromise().then((resp)=>{
+      console.log(resp)
+      data = resp
+    })
+
     const options: EChartsOption = {
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: [
+        data: data.map((i:any)=>i.hour+':00' ) /* [
           '05:00',
           '06:00',
           '07:00',
@@ -201,7 +215,7 @@ export class ChartsService {
           '18:00',
           '19:00',
           '20:00',
-        ],
+        ] */,
       },
       yAxis: {
         type: 'value',
@@ -227,7 +241,7 @@ export class ChartsService {
       },
       series: [
         {
-          name: 'Subida Y Bajada',
+          name: 'Subida',
           type: 'line',
           stack: 'Total',
           smooth: false,
@@ -258,17 +272,17 @@ export class ChartsService {
           emphasis: {
             focus: 'series',
           },
-          data: [
+          data: data.map((i:any)=>i.pasajeros) /* [
             140, 232, 222, 264, 290, 340, 250, 300, 300, 260, 160, 190, 220,
             310, 290, 260,
-          ],
+          ] */
         },
       ],
     };
     return options;
   }
 
-  setOptionsChartsBarPassengers() {
+  setOptionsChartsBarDisembarkationPassengers() {
     let dataAxis = ['点', '击', '柱', '子', '或', '者', '两', '指'];
 
     let data = [220, 182, 191, 234, 290, 330, 310, 123];
@@ -323,4 +337,56 @@ export class ChartsService {
 
     return options;
   }
+
+  ///////////////////////////////PETICIONES/////////////////////////////////////////
+
+  //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total 
+  getTotalPassengers(date:'today'|'this_week'|'this_month') {
+    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    const endpoint = `${this.contadorApiUrl}/total_passengers`;
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+    const params = new HttpParams().set('date', date)
+    
+    return this.http.get<TotalPasajeros>(endpoint, { headers: headers, params })
+  }
+
+  getTotalPassengersByRangeDate(start_date:string,end_date:string) {
+    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    const endpoint = `${this.contadorApiUrl}/total_passengers`;
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+    const params = new HttpParams().set('start_date', start_date)
+                                   .set('end_date', end_date)
+    return this.http.get<TotalPasajeros>(endpoint, { headers: headers, params })
+  }
+//Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
+
+getTotalPassengersByTimeToday() {//Este da como resultado un array por horas
+  const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+  const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
+  const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+  const params = new HttpParams().set('date', 'today')
+  
+  return this.http.get<TotalPorHoraDeHoy[]>(endpoint, { headers: headers, params })//Este da como resultado un array por horas
+}
+
+
+  getTotalPassengersByDay(date:'today'|'this_week'|'this_month') {
+    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+    const params = new HttpParams().set('date', date)
+    
+    return this.http.get<TotalPorDia[]>(endpoint, { headers: headers, params })
+  }
+
+  getTotalPassengersByDayByRange(start_date:string,end_date:string) {
+    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+    const params = new HttpParams().set('start_date', start_date)
+                                   .set('end_date', end_date)
+    return this.http.get<TotalPorDia[]>(endpoint, { headers: headers, params })
+  }
+
+  ///////////////////////////////PETICIONES/////////////////////////////////////////
 }

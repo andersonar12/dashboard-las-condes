@@ -9,9 +9,34 @@ import { map } from 'rxjs/operators';
 export class AuthService {
 
   public apiUrl = ''
-  /* public token:string | undefined  = '' */
 
   constructor(private http: HttpClient) { }
+
+  //Este endpoint para iniciar en LiveGPS y obtener el token del mismo
+  signInGPS() {
+
+    const endpoint = 'https://socketgpsv1.gestsol.cl/api/gestsol-auth';
+    const credenciales ={ username: 'lascondes', password: 'lascondes' }
+
+    return this.http.post(endpoint, credenciales).pipe(map((key)=>{
+
+     let resp
+
+      if (key.hasOwnProperty('error')){
+        
+        resp = key
+        return resp
+
+      } else {
+
+        localStorage.removeItem('tokenLiveGPS')
+        localStorage.setItem('tokenLiveGPS', JSON.stringify(key))
+        
+        return key
+      }  
+
+    }))          
+  }
   
   signIn(data: any) {
 
@@ -54,5 +79,6 @@ export class AuthService {
     return this.http.post<any>(endpoint, null,{ headers: headers})
     
   }
+
 
 }
