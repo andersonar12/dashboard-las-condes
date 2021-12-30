@@ -90,7 +90,7 @@ export class StatisticsComponent implements OnInit {
 
   }
 
-  filterData(date:'today'|'this_week'|'this_month'){
+  async filterData(date:'today'|'this_week'|'this_month'){
 
     const ch = this.charts
     document.getElementById('btnAccordion2')?.click()
@@ -99,28 +99,32 @@ export class StatisticsComponent implements OnInit {
     
 
     if (date == 'today') {
-      Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getTotalPassengersByTimeToday().toPromise()])
-      .then(([res,res2])=>{
+      Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getTotalPassengersByTimeToday().toPromise(),ch.setOptionsChartsBoardingPassengers()])
+      .then(([res,res2,res3])=>{
         this.totalPassengers = res.total_pasajeros
         this.averagePassengers = this.calculateAverage(res2.map(item=>item.pasajeros)).replace('.',',')
+        this.optionChart1 = res3
         this.resService.closeLoader()
       })
     }
 
     if (date == 'this_week') {
-      Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getTotalPassengersByDay(date).toPromise()])
-      .then(([res,res2])=>{
+      Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getTotalPassengersByDay(date).toPromise(),ch.setOptionsChartsBoardingPassengers(date)])
+      .then(([res,res2,res3])=>{
         this.totalPassengers = res.total_pasajeros
         this.averagePassengers = this.calculateAverage(res2.map(item=>item.enters)).replace('.',',')
+        this.optionChart1 = res3
         this.resService.closeLoader()
       })
+      
     }
 
     if (date == 'this_month') {
-      Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getTotalPassengersByDay(date).toPromise()])
-      .then(([res,res2])=>{
+      Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getTotalPassengersByDay(date).toPromise(),ch.setOptionsChartsBoardingPassengers(date)])
+      .then(([res,res2,res3])=>{
         this.totalPassengers = res.total_pasajeros
         this.averagePassengers = this.calculateAverage(res2.map(item=>item.enters)).replace('.',',')
+        this.optionChart1 = res3 
         this.resService.closeLoader()
       })
     }
@@ -130,7 +134,7 @@ export class StatisticsComponent implements OnInit {
   filterByDatePicker(){
     
     this.resService.presentLoader()
-
+    const c = this.charts
     let params = this.rangeDatePicker.value
 
     params.start_date = moment(params.start_date).format("YYYY-MM-DD")
@@ -144,11 +148,17 @@ export class StatisticsComponent implements OnInit {
     const end_date = params.end_date+' '+params.endTime
     
     console.log(start_date, end_date)
-    this.charts.getTotalPassengersByRangeDate(start_date,end_date).toPromise()
-     .then((resp)=>{
-       this.totalPassengers = resp.total_pasajeros
+
+    Promise.all([c.getTotalPassengersByRangeDate(start_date,end_date).toPromise(),
+      c.setOptionsChartsBoardingPassengers(undefined,start_date,end_date)])
+     .then(([res1,res2])=>{
+       this.totalPassengers = res1.total_pasajeros
+       this.optionChart1 = res2
        this.resService.closeLoader()
      })
+
+
+
     
     document.getElementById('btnAccordion2')?.click()
     

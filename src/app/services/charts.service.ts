@@ -13,7 +13,7 @@ import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy } from '../interfaces/in
 })
 export class ChartsService {
 
-  public contadorApiUrl = environment.contadorApiUrl +'/api/'
+  public contadorApiUrl = environment.contadorApiUrl +'/api'
   constructor(private http: HttpClient) {}
   
   setOptionsChartsPassengers() {
@@ -185,20 +185,43 @@ export class ChartsService {
     return options;
   }
 
-  async setOptionsChartsBoardingPassengers() {
+  async setOptionsChartsBoardingPassengers(date?:'this_week'|'this_month',start_date?:string,end_date?:string ) {
 
-    let data:any
+    let dataX:any
+    let dataY:any
+
+    /* let mapCustom = (data:any,funct:Function) => {
+      return data.map(funct)
+    }
+ */
+    if (date) { // para obtener total pasajeros por dia de la semana o mes
+      await this.getTotalPassengersByDay(date).toPromise().then((resp)=>{
+        console.log(resp)
+        dataX = resp.map((i:any)=>i.date) 
+        dataY = resp.map((i:any)=>i.enters) 
+      })
+
+    } else if(start_date && end_date){ // para obtener total pasajeros por rango de fecha
+      await this.getTotalPassengersByDayByRange(start_date, end_date).toPromise().then((resp)=>{
+        console.log(resp)
+        dataX = resp.map((i:any)=>i.date) 
+        dataY = resp.map((i:any)=>i.enters) 
+      })
+    }
+    else { //total pasajeros por hora de hoy
+      await this.getTotalPassengersByTimeToday().toPromise().then((resp)=>{
+        console.log(resp)
+        dataX = resp.map((i:any)=>i.hour+':00') 
+        dataY = resp.map((i:any)=>i.pasajeros) 
+      })
+
+    }
     
-    await this.getTotalPassengersByTimeToday().toPromise().then((resp)=>{
-      console.log(resp)
-      data = resp
-    })
-
     const options: EChartsOption = {
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: data.map((i:any)=>i.hour+':00' ) /* [
+        data: dataX /* [
           '05:00',
           '06:00',
           '07:00',
@@ -272,7 +295,7 @@ export class ChartsService {
           emphasis: {
             focus: 'series',
           },
-          data: data.map((i:any)=>i.pasajeros) /* [
+          data: dataY/* [
             140, 232, 222, 264, 290, 340, 250, 300, 300, 260, 160, 190, 220,
             310, 290, 260,
           ] */

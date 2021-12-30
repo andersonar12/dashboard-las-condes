@@ -18,14 +18,13 @@ export class AuthService {
     const endpoint = 'https://socketgpsv1.witservices.io/api/gestsol-auth';
     const credenciales ={ username: 'lascondes', password: 'lascondes' }
 
-    return this.http.post(endpoint, credenciales).pipe(map((key)=>{
+    return this.http.post(endpoint, credenciales).pipe(map((key:any)=>{
 
      let resp
 
       if (key.hasOwnProperty('error')){
         
-        resp = key
-        return resp
+        alert(`Error Live GPS, ${key.error}`)
 
       } else {
 

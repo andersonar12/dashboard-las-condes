@@ -79,7 +79,7 @@ export class HomeComponent implements OnInit {
         })
         console.log(this.machines)
         this.resService.closeLoader()
-      })
+      }).catch((e)=>this.resService.closeLoader())
   }
 
   getChartData(){
