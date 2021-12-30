@@ -15,7 +15,7 @@ export class AuthService {
   //Este endpoint para iniciar en LiveGPS y obtener el token del mismo
   signInGPS() {
 
-    const endpoint = 'https://socketgpsv1.gestsol.cl/api/gestsol-auth';
+    const endpoint = 'https://socketgpsv1.witservices.io/api/gestsol-auth';
     const credenciales ={ username: 'lascondes', password: 'lascondes' }
 
     return this.http.post(endpoint, credenciales).pipe(map((key)=>{

@@ -17,7 +17,7 @@ export class ResourcesService {
 
   getDevicesGPS(){
    
-    const endpoint = 'https://socketgpsv1.gestsol.cl/sapi/devices';
+    const endpoint = 'https://socketgpsv1.witservices.io/sapi/devices';
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('tokenLiveGPS')!).access_token

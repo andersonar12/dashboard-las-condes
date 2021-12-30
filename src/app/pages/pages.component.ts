@@ -12,9 +12,14 @@ export class PagesComponent implements OnInit {
 
   ngOnInit(): void {
     if (!localStorage.getItem('tokenLiveGPS')) {
-      this.authServ.signInGPS().subscribe((resp)=>{
+      this.authServ.signInGPS().toPromise().then((resp)=>{
         console.log(resp)
-      })
+      }).catch((e)=>{
+        console.log(e)
+        alert('ha ocurrido error al iniciar sesion en Live GPS')
+        window.location.reload()
+      }
+      )
     }
   }
 
