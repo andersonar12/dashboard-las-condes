@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import * as echarts from 'echarts';
 import Swal from 'sweetalert2'
 import { environment } from '../../environments/environment';
-import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy } from '../interfaces/interfaces';
+import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy, PromedioPasajeros } from '../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +14,7 @@ import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy } from '../interfaces/in
 export class ChartsService {
 
   public contadorApiUrl = environment.contadorApiUrl +'/api'
+  public plate!:string 
   constructor(private http: HttpClient) {}
   
   setOptionsChartsPassengers() {
@@ -368,17 +369,25 @@ export class ChartsService {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/total_passengers`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    const params = new HttpParams().set('date', date)
-    
+
+    let params
+    if (this.plate)  params = new HttpParams().set('date', date).set('plate', this.plate)
+    else params = new HttpParams().set('date', date)
+
     return this.http.get<TotalPasajeros>(endpoint, { headers: headers, params })
   }
 
-  getTotalPassengersByRangeDate(start_date:string,end_date:string) {
+  getTotalPassengersByRangeDate(start_date: string, end_date: string) {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/total_passengers`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    const params = new HttpParams().set('start_date', start_date)
-                                   .set('end_date', end_date)
+
+    let params
+    if (this.plate)  params = new HttpParams().set('start_date', start_date)
+    .set('end_date', end_date).set('plate', this.plate)
+    else params = new HttpParams().set('start_date', start_date)
+    .set('end_date', end_date)
+    
     return this.http.get<TotalPasajeros>(endpoint, { headers: headers, params })
   }
 //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
@@ -387,18 +396,23 @@ getTotalPassengersByTimeToday() {//Este da como resultado un array por horas
   const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
   const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
   const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-  const params = new HttpParams().set('date', 'today')
-  
+
+  let params
+    if (this.plate)  params = new HttpParams().set('date', 'today').set('plate', this.plate)
+    else params = new HttpParams().set('date', 'today')
+
   return this.http.get<TotalPorHoraDeHoy[]>(endpoint, { headers: headers, params })//Este da como resultado un array por horas
 }
-
 
   getTotalPassengersByDay(date:'today'|'this_week'|'this_month') {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    const params = new HttpParams().set('date', date)
-    
+   
+    let params
+    if (this.plate)  params = new HttpParams().set('date', date).set('plate', this.plate)
+    else params = new HttpParams().set('date', date)
+
     return this.http.get<TotalPorDia[]>(endpoint, { headers: headers, params })
   }
 
@@ -406,10 +420,53 @@ getTotalPassengersByTimeToday() {//Este da como resultado un array por horas
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    const params = new HttpParams().set('start_date', start_date)
-                                   .set('end_date', end_date)
+                                
+    let params
+    if (this.plate)  params = new HttpParams().set('start_date', start_date).set('end_date', end_date).set('plate', this.plate)
+    else params = new HttpParams().set('start_date', start_date).set('end_date', end_date)
+
     return this.http.get<TotalPorDia[]>(endpoint, { headers: headers, params })
   }
+
+
+  /* Para obtener Promedio de Pasajeros */
+
+  getAveragePassengersByTimeToday() {
+    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    const endpoint = `${this.contadorApiUrl}/avg_passengers`;
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+    let params
+    if (this.plate)  params = new HttpParams().set('date', 'today').set('plate', this.plate)
+    else params = new HttpParams().set('date', 'today')
+
+    return this.http.get<PromedioPasajeros[]>(endpoint, { headers: headers, params })
+  }
+
+  getAveragePassengersByDay(date:'today'|'this_week'|'this_month') {
+    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    const endpoint = `${this.contadorApiUrl}/avg_passengers`;
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+
+    let params
+    if (this.plate)  params = new HttpParams().set('date', date).set('plate', this.plate)
+    else params = new HttpParams().set('date', date) 
+
+    return this.http.get<PromedioPasajeros[]>(endpoint, { headers: headers, params })
+  }
+
+  getAveragePassengersByDayByRange(start_date:string,end_date:string) {
+    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    const endpoint = `${this.contadorApiUrl}/avg_passengers`;
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+  
+
+    let params
+    if (this.plate)  params = new HttpParams().set('start_date', start_date).set('end_date', end_date).set('plate', this.plate)
+    else params = new HttpParams().set('start_date', start_date).set('end_date',end_date)                               
+
+    return this.http.get<PromedioPasajeros[]>(endpoint, { headers: headers, params })
+  }
+  /* Para obtener Promedio de Pasajeros */
 
   ///////////////////////////////PETICIONES/////////////////////////////////////////
 }

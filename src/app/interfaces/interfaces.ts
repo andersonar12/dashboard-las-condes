@@ -12,6 +12,12 @@ export interface TotalPasajeros {
     total_pasajeros: number;
 }
 
+export interface PromedioPasajeros {
+    date?:string;
+    hour?: number;
+    promedio_pasajeros: string;
+}
+
 
 ////////////////// Dispositivos Buses LiveGPS ////////////////////
 export interface AreaNegocio {
@@ -101,3 +107,4 @@ export interface ResponseDevicesGPS {
     data: MachineGPS[]
 }
 ////////////////// Dispositivos Buses LiveGPS ////////////////////
+
