@@ -42,14 +42,14 @@ export class ChartsService {
       .then(([res])=>{
         this.totalPassengersInWeek = res.reduce((prev, current) => prev + current.enters, 0)
         data= res
-       /*  console.log(data) */
+        console.log(data)
       })
 
     const options: EChartsOption = {
       xAxis: {
         type: 'category',
-        data: data.map((d:TotalPorDia)=> d.date.replace(`${new Date().getFullYear()}-`,'')),
-        /* ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'], */
+        data: /* data.map((d:TotalPorDia)=> d.date.replace(`${new Date().getFullYear()}-`,'')) ,*/
+        ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'],
         boundaryGap: false,
       },
       yAxis: {

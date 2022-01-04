@@ -95,6 +95,34 @@ export class HomeComponent implements OnInit {
     })
   }
 
+  //esta funcion se usaria en caso de que se requiera que el marcador de cada bus se abra con el mouseover
+  onMouseOver(infoWindow:any, gm:any) {
+
+    if (gm.lastOpen != null) {
+        gm.lastOpen.close();
+    }
+
+    gm.lastOpen = infoWindow;
+    infoWindow.open();
+}
+
+  centerBus(plate:string) {
+
+    const findBus = this.machines.findIndex(bus => bus.plate == plate);
+
+    /* let busSearched =  this.buses[findBus] */
+
+    if (findBus >= 0) {
+      if (this.map) {
+        this.map.setCenter({ lat: this.machines[findBus].lpf.lat, lng: this.machines[findBus].lpf.lng });
+        this.map.setZoom(22)
+      }
+    }
+
+  }
+
+
+
   filter(){
     console.log(this.rangeDatePicker.value)
     document.getElementById('btnAccordion2')?.click()

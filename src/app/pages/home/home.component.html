@@ -141,7 +141,7 @@
 </div>
 
 <!-- Mapa -->
-<agm-map [zoom]="zoom" [latitude]="lat" [longitude]="lng" (mapClick)="seeCoords($event)" (mapReady)="mapReady($event)">
+<agm-map #gm [zoom]="zoom" [latitude]="lat" [longitude]="lng" (mapClick)="seeCoords($event)" (mapReady)="mapReady($event)" >
     <!-- Marcador cuando se hace click en el mapa -->
     <agm-marker [latitude]="latClickMap" [longitude]="lngClickMap" *ngIf="latClickMap || lngClickMap">
     </agm-marker>
@@ -162,9 +162,8 @@
             <p class="pb-0 mb-0 fs-6"><strong>Pasajeros:</strong>1.125</p>
         </agm-info-window>
     </agm-marker> -->
-    <agm-marker [latitude]="machine.lpf.lat" [longitude]="machine.lpf.lng" [iconUrl]="'assets/images/Grupo '+machine.marker+'.png'"
-        *ngFor="let machine of machines">
-        <agm-info-window [disableAutoPan]="true">
+    <agm-marker [latitude]="machine.lpf.lat" [longitude]="machine.lpf.lng" [iconUrl]="'assets/images/Grupo '+machine.marker+'.png'" *ngFor="let machine of machines"> <!-- (mouseOver)="onMouseOver(infoWindow,gm)" -->
+        <agm-info-window [disableAutoPan]="false" #infoWindow>
             <p class="pb-0 mb-0 fs-6"><strong>Maquina:</strong>{{machine.name}} ({{machine.plate}})</p>
             <p class="pb-0 mb-0 fs-6"><strong>Pasajeros: 35</strong></p>
             <div class="d-flex justify-content-end mb-1">
@@ -270,12 +269,12 @@
                     <p class="mt-3 mb-0" style="font-size: 18px;"><strong>Máquinas</strong></p>
 
                     <div class="d-flex justify-content-between hvr-grow-shadow machine-hover" 
-                        (click)="openMachineDetailModal()" *ngFor="let machine of machines">
-                        <div class="d-flex align-items-center">
+                         *ngFor="let machine of machines">
+                        <div class="d-flex align-items-center" (click)="openMachineDetailModal()">
                             <img [src]="'assets/images/Grupo '+machine.marker+'.png'" width="50px" class="">
                             <p class="mb-0" style="font-size: 18px;">{{machine.name}} ({{machine.plate}})</p>
                         </div>
-                        <img src="assets/images/icon-search.svg"  alt="" srcset="">
+                        <img src="assets/images/icon-search.svg" (click)="centerBus(machine.plate)" alt="" srcset="">
                     </div>
 
                    <!--  <div class="d-flex justify-content-between hvr-grow-shadow machine-hover "
