@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { delay, map, retryWhen, take } from 'rxjs/operators';
 import { environment } from "../../environments/environment";
 import Swal from 'sweetalert2'
 import { MachineGPS, ResponseDevicesGPS } from '../interfaces/interfaces';
@@ -22,7 +22,9 @@ export class ResourcesService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('tokenLiveGPS')!).access_token
     })
-    return this.http.get<ResponseDevicesGPS>(endpoint, { headers: headers })
+    return this.http.get<ResponseDevicesGPS>(endpoint, { headers: headers }).pipe(
+      retryWhen( err => err.pipe(delay(1500),take(2) )) 
+    )
   }
 
   presentLoader(){

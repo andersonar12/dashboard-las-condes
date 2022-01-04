@@ -16,7 +16,7 @@
                         <img src="assets/images/Grupo 1770.svg" class="me-3" width="57px" alt="" srcset="">
                         <div class="text-black ">
                             <p class="mb-0 text-small">Pasajeros</p>
-                            <span class="text-small"><strong>Cantidad: 3570</strong></span>
+                            <span class="text-small"><strong>Cantidad: {{charts.totalPassengersInWeek}}</strong></span>
                         </div>
                         <div *ngIf="optionChart1">
                             <div echarts [options]="optionChart1" style="width: 190px; height: 110px;"></div>
@@ -29,7 +29,7 @@
                         <img src="assets/images/Grupo 1769.svg" class="me-3" width="57px" alt="" srcset="">
                         <div class="text-black">
                             <p class="mb-0 text-small">Buses en recorrido</p>
-                            <span class="text-small"><strong>Cantidad: 10</strong></span>
+                            <span class="text-small"><strong>Cantidad: {{charts.totalBusesActive}}</strong></span>
                         </div>
                         <div *ngIf="optionChart2">
                             <!--  (window:resize)=" resizeChart(ContainerRef.offsetWidth)-->
@@ -71,7 +71,7 @@
                                     <div class="col-6 px-1">
                                         <mat-form-field appearance="fill" class="w-100">
                                             <mat-label>Fecha:</mat-label>
-                                            <input matInput [matDatepicker]="picker" formControlName="start"
+                                            <input matInput [matDatepicker]="picker" [max]="minDate" formControlName="start"
                                                 (dateInput)="datePicker()">
                                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                             <mat-datepicker #picker></mat-datepicker>
@@ -166,7 +166,12 @@
         *ngFor="let machine of machines">
         <agm-info-window [disableAutoPan]="true">
             <p class="pb-0 mb-0 fs-6"><strong>Maquina:</strong>{{machine.name}} ({{machine.plate}})</p>
-            <p class="pb-0 mb-0 fs-6"><strong>Pasajeros:</strong></p>
+            <p class="pb-0 mb-0 fs-6"><strong>Pasajeros: 35</strong></p>
+            <div class="d-flex justify-content-end mb-1">
+
+                <button class="btn btn-primary d-flex align-items-center" (click)="openMachineDetailModal()" type="button"><mat-icon>assignment</mat-icon></button>
+            </div>
+            
         </agm-info-window>
     </agm-marker>
 

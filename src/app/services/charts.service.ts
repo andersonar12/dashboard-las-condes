@@ -2,11 +2,12 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import { Observable, } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { delay, map, retryWhen, take } from 'rxjs/operators';
 import * as echarts from 'echarts';
 import Swal from 'sweetalert2'
 import { environment } from '../../environments/environment';
-import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy, PromedioPasajeros } from '../interfaces/interfaces';
+import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy, PromedioPasajeros, ResponseDevicesGPS } from '../interfaces/interfaces';
+import { Router, Event, NavigationStart, NavigationEnd, NavigationError } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -14,14 +15,41 @@ import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy, PromedioPasajeros } fro
 export class ChartsService {
 
   public contadorApiUrl = environment.contadorApiUrl +'/api'
-  public plate!:string 
-  constructor(private http: HttpClient) {}
+  public plate!:string | undefined
+  public totalBusesActive!: string | number
+  public totalPassengersInWeek!: string | number
+  /* public totalBusesInactive!: string | number */
+  constructor(private http: HttpClient,private router: Router) {
+    this.router.events.subscribe((event: Event) => {
+      if (event instanceof NavigationStart) {
+          // Show progress spinner or progress bar
+          this.plate = undefined
+      }
+
+      /* if (event instanceof NavigationError) {
+           // Hide progress spinner or progress bar
+          // Present error to user
+          console.log(event.error);
+      } */
+  });
+  }
   
-  setOptionsChartsPassengers() {
+  async setOptionsChartsPassengers() {
+
+    let data:any
+
+    await Promise.all([this.getTotalPassengersByDay('this_week').toPromise()])
+      .then(([res])=>{
+        this.totalPassengersInWeek = res.reduce((prev, current) => prev + current.enters, 0)
+        data= res
+       /*  console.log(data) */
+      })
+
     const options: EChartsOption = {
       xAxis: {
         type: 'category',
-        data: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'],
+        data: data.map((d:TotalPorDia)=> d.date.replace(`${new Date().getFullYear()}-`,'')),
+        /* ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'], */
         boundaryGap: false,
       },
       yAxis: {
@@ -48,7 +76,7 @@ export class ChartsService {
       series: [
         {
           name: 'Subida',
-          data: [0, 932, 901, 934, 450],
+          data: data.map((d:TotalPorDia)=> d.enters)/* [0, 932, 901, 934, 450] */,
           type: 'line',
           smooth: true,
           symbolSize: 10,
@@ -60,7 +88,7 @@ export class ChartsService {
             color: '#0acdff',
           },
         },
-        {
+        /* {
           name: 'Bajada',
           data: [0, 300, 800, 750, 400],
           type: 'line',
@@ -73,17 +101,56 @@ export class ChartsService {
           lineStyle: {
             color: '#ffbb00',
           },
-        },
+        }, */
       ],
     };
     return options;
   }
 
-  setOptionsChartsBusesInRoute() {
+  async setOptionsChartsBusesInRoute() {
+
+    let data:any
+
+    const percentageCalculator = (amount:number , total:number,)=> {       
+      return ((amount * 100) / total).toFixed(2)
+   }
+
+    await Promise.all([this.getTotalActiveMachinesToday().toPromise(),this.getDevicesGPS().toPromise()]) 
+          .then(([resp,resp2])=>{
+
+            let activeBuses = resp // arreglo por placas buses en recorrido o activos
+            let busFleet:Array<string> = resp2['data'].map((m)=>m.plate) //arreglo mapeado por placas de flota de buses (estacionados)
+
+            let totalBusesActive = 0
+            let totalBusesInactive = busFleet.length
+
+            activeBuses.forEach((bus)=>{
+
+              const finded = busFleet.indexOf(bus)
+              if(finded >= 0){
+                totalBusesActive =+1 //se suma uno a uno si el bus esta activo
+                totalBusesInactive --//y lo restamos de los buses inactivos
+              }
+            })
+
+            this.totalBusesActive = totalBusesActive
+            /* this.totalBusesInactive = totalBusesInactive */
+            console.log('Activos:'+ totalBusesActive,'Inactivos:'+ totalBusesInactive)
+
+            //calculamos los porcentajes
+            let activePercentage = percentageCalculator(totalBusesActive,busFleet.length)
+            let inactivePercentage= percentageCalculator(totalBusesInactive,busFleet.length)
+
+            console.log('Porcentaje activos:'+activePercentage,'Porcentaje inactivos:'+inactivePercentage)
+
+
+            data = {activePercentage,totalBusesActive,totalBusesInactive}
+          }) 
+
     const options: EChartsOption = {
       title: [
         {
-          text: '100%',
+          text: `${data.activePercentage}%`,
           left: '45%',
           top: '37%',
           textAlign: 'center',
@@ -101,7 +168,7 @@ export class ChartsService {
       },
       series: [
         {
-          name: 'Buses en recorrido',
+          name: 'Buses',
           type: 'pie',
           radius: ['55%', '70%'],
           avoidLabelOverlap: false,
@@ -121,11 +188,18 @@ export class ChartsService {
           },
           data: [
             {
-              value: 10,
-              name: 'Buses',
+              value:data['totalBusesActive'],
+              name: 'Buses Activos',
               itemStyle: {
-                color: '#ffbb00',
+                color: '#ffbb00'
               },
+            },
+            {
+              value: data['totalBusesInactive'],
+              name: 'Buses Inactivos',
+              itemStyle: {
+               color: '#0acdff',
+              }
             },
           ],
         },
@@ -468,5 +542,29 @@ getTotalPassengersByTimeToday() {//Este da como resultado un array por horas
   }
   /* Para obtener Promedio de Pasajeros */
 
+  /* Obtener Buses activos  */
+
+  getTotalActiveMachinesToday() {//Este da como resultado un array  de buses activo por placa
+    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    const endpoint = `${this.contadorApiUrl}/active_vehicles`;
+    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
+  
+    let params = new HttpParams().set('date', 'today')
+  
+    return this.http.get<string[]>(endpoint, { headers: headers, params })
+  }
+
   ///////////////////////////////PETICIONES/////////////////////////////////////////
+
+  getDevicesGPS(){
+   
+    const endpoint = 'https://socketgpsv1.witservices.io/sapi/devices';
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('tokenLiveGPS')!).access_token
+    })
+    return this.http.get<ResponseDevicesGPS>(endpoint, { headers: headers }).pipe(
+      retryWhen( err => err.pipe(delay(1000),take(2) )) 
+    )
+  }
 }

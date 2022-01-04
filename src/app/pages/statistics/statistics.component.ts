@@ -29,7 +29,7 @@ export class StatisticsComponent implements OnInit {
   public optionChart2!:any
 
   public machines!:MachineGPS[]
-  public machinePicked!:string 
+  public machinePicked!:string  | undefined
 
   public displayedColumns: string[] = ['time','machine', 'route'];
   public dataSource!: MatTableDataSource<any>
@@ -60,19 +60,20 @@ export class StatisticsComponent implements OnInit {
     let ch = this.charts
     const res = this.resService
 
-    this.dataChartsSub = forkJoin([this.charts.getTotalPassengers('today'),this.charts.getAveragePassengersByTimeToday(),this.resService.getDevicesGPS()]).subscribe(([res1,res2,{data}])=>{
-      console.log('Statistics Today',[res1,res2,data])
+    this.dataChartsSub = forkJoin([this.charts.getTotalPassengers('today'),this.charts.getAveragePassengersByTimeToday(),this.resService.getDevicesGPS(),this.charts.getTotalActiveMachinesToday()]).
+    subscribe(([res1,res2,{data},res4])=>{
+      console.log('Statistics Today',[res1,res2,data,])
 
       //Total de pasajeros 
-      this.totalPassengers = res1['total_pasajeros']
+      this.totalPassengers =(res == null) ?  '0' : res1['total_pasajeros']
       //Promedio de Pasajeros
-      this.averagePassengers = this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
+      this.averagePassengers = (res2.length == 0) ?  '0':this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
       //Total de Buses
-      this.totalMachines = data.length
+      this.totalMachines = res4.length
 
       this.machines = data
       res.closeLoader()
-    })
+    },(err)=>{console.log(err);res.closeLoader()})
 
 
     this.optionChart1 = await ch.setOptionsChartsBoardingPassengers()
@@ -107,8 +108,10 @@ export class StatisticsComponent implements OnInit {
     if (date == 'today') {
       Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getAveragePassengersByTimeToday().toPromise(),ch.setOptionsChartsBoardingPassengers()])
       .then(([res,res2,res3])=>{
-        this.totalPassengers = res.total_pasajeros
-        this.averagePassengers = this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
+        
+      
+        this.totalPassengers = (res == null) ?  '0' : res.total_pasajeros
+        this.averagePassengers = (res2.length == 0) ?  '0' : this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
         this.optionChart1 = res3
         this.resService.closeLoader()
       })
@@ -116,9 +119,9 @@ export class StatisticsComponent implements OnInit {
 
     if (date == 'this_week') {
       Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getAveragePassengersByDay(date).toPromise(),ch.setOptionsChartsBoardingPassengers(date)])
-      .then(([res,res2,res3])=>{
-        this.totalPassengers = res.total_pasajeros
-        this.averagePassengers = this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
+      .then(async([res,res2,res3])=>{
+        this.totalPassengers = (res == null) ?  '0' : res.total_pasajeros
+        this.averagePassengers = (res2.length == 0) ?  '0' : this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
         this.optionChart1 = res3
         this.resService.closeLoader()
       })
@@ -128,8 +131,8 @@ export class StatisticsComponent implements OnInit {
     if (date == 'this_month') {
       Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getAveragePassengersByDay(date).toPromise(),ch.setOptionsChartsBoardingPassengers(date)])
       .then(([res,res2,res3])=>{
-        this.totalPassengers = res.total_pasajeros
-        this.averagePassengers = this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
+        this.totalPassengers = (res == null) ?  '0' : res.total_pasajeros
+        this.averagePassengers = (res2.length == 0) ?  '0': this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
         this.optionChart1 = res3 
         this.resService.closeLoader()
       })
@@ -140,7 +143,6 @@ export class StatisticsComponent implements OnInit {
   filterByDatePicker(){
     
     this.resService.presentLoader()
-    const c = this.charts
     let params = this.rangeDatePicker.value
 
     params.start_date = moment(params.start_date).format("YYYY-MM-DD")
@@ -155,10 +157,11 @@ export class StatisticsComponent implements OnInit {
     
     console.log(start_date, end_date)
 
-    Promise.all([c.getTotalPassengersByRangeDate(start_date,end_date).toPromise(),
-                  c.setOptionsChartsBoardingPassengers(undefined,start_date,end_date),
-                  c.getAveragePassengersByDayByRange(start_date,end_date).toPromise()])
+    Promise.all([this.charts.getTotalPassengersByRangeDate(start_date,end_date).toPromise(),
+      this.charts.setOptionsChartsBoardingPassengers(undefined,start_date,end_date),
+      this.charts.getAveragePassengersByDayByRange(start_date,end_date).toPromise()])
      .then(([res1,res2,res3])=>{
+       
        this.totalPassengers = res1.total_pasajeros
        this.optionChart1 = res2
        this.averagePassengers = this.calculateAverage(res3.map(item=>+item.promedio_pasajeros)).replace('.',',')
@@ -167,11 +170,18 @@ export class StatisticsComponent implements OnInit {
 
     
     document.getElementById('btnAccordion2')?.click()
+    
   }
 
   machinePick(picked:MachineGPS){
     this.machinePicked = `${picked.name} (${picked.plate})`
     this.charts.plate = picked.plate // para filtrar toda la data por numero de placa de bus
+    document.getElementById('btnAccordion3')?.click()
+  }
+
+  restore(){
+    this.machinePicked = undefined
+    this.charts.plate = undefined
     document.getElementById('btnAccordion3')?.click()
   }
 

@@ -28,10 +28,10 @@ export class HomeComponent implements OnInit {
   public lng= -70.56714105961915//Para centralizar el mapa en Las Condes
   public latClickMap!:number
   public lngClickMap!:number
-  public optionChart1!:EChartsOption
-  public optionChart2!:EChartsOption
-  public optionChart3!:EChartsOption
-
+  public optionChart1!:any
+  public optionChart2!:any
+  public optionChart3!:any
+  public minDate = new Date()
   public rangeDatePicker = new FormGroup({
     start:    new FormControl('',[Validators.required]),
     startTime:new FormControl('',[Validators.required]),
@@ -53,7 +53,7 @@ export class HomeComponent implements OnInit {
 
     // este metodo es del API de Google Maps te permite consultar direcciones pasandole lat y lng 
    
-    this.mapService.getAddress(-33.40904396097648, -70.56714105961915).subscribe((resp) => {
+    this.mapService.getAddress(-33.40904396097648, -70.56714105961915).toPromise().then((resp) => {
       console.log(resp)
       this.latClickMap = -33.40904396097648
       this.lngClickMap = -70.56714105961915
@@ -66,7 +66,7 @@ export class HomeComponent implements OnInit {
       .then(({data})=>{
         let index = 0
         this.machines = data.map((machine)=>{
-
+          // Aqui en este .map() asignamos los colores de los marcadores a cada bus <--
           if (index >= this.markers.length){ 
             index = 0
             machine.marker = this.markers[index]
@@ -75,16 +75,16 @@ export class HomeComponent implements OnInit {
           }
           index++
 
-          return machine
+          return machine // --> Aqui en este .map() asignamos los colores de los marcadores a cada bus
         })
         console.log(this.machines)
         this.resService.closeLoader()
       }).catch((e)=>this.resService.closeLoader())
   }
 
-  getChartData(){
-   this.optionChart1 = this.charts.setOptionsChartsPassengers()
-   this.optionChart2 = this.charts.setOptionsChartsBusesInRoute()
+  async getChartData(){
+   this.optionChart1 = await this.charts.setOptionsChartsPassengers()
+   this.optionChart2 = await this.charts.setOptionsChartsBusesInRoute()
    this.optionChart3 = this.charts.setOptionsChartsAverageRise()
   }
 

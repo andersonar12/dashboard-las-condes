@@ -86,6 +86,7 @@
                                 <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
                                     data-bs-parent="#accordionExample3">
                                     <div class="accordion-body py-2">
+                                        <p class="fs-6 text-black mb-1 text-center machine-items" (click)="restore()">Todos</p>
                                         <p class="fs-6 text-black mb-1 text-center machine-items" (click)="machinePick(machine)" *ngFor="let machine of machines">{{machine.name}} ({{machine.plate}})</p>
                                     </div>
                                 </div>
@@ -131,9 +132,9 @@
                       <div class="d-flex align-items-lg-center">
   
                           <img src="assets/images/Grupo 1769.svg" class="me-3" alt="" width="42px" srcset="">
-                          <p class="text-black mb-0" style="font-size: 32px;"><strong *ngIf="totalMachines">{{totalMachines}}</strong> </p>
+                          <p class="text-black mb-0" style="font-size: 32px;" *ngIf="totalMachines"><strong >{{totalMachines}}</strong> de {{machines.length}} </p>
                       </div>
-                      <p class="mb-0 text-black text-center">Total de buses</p>
+                      <p class="mb-0 text-black text-center">Total de buses activos</p>
                   </div>
               </div>
               <div class="row mt-5">
