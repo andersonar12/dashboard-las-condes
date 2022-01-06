@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit {
 
   public pushbar:any
   public machines!:MachineGPS[]
+  public machinePicked!:string  | undefined
   public markers = ['1597','1729','1730','1731','1732','1733','1735','1736']
   public map: any;
   public zoom = 14;
@@ -85,7 +86,7 @@ export class HomeComponent implements OnInit {
   async getChartData(){
    this.optionChart1 = await this.charts.setOptionsChartsPassengers()
    this.optionChart2 = await this.charts.setOptionsChartsBusesInRoute()
-   this.optionChart3 = this.charts.setOptionsChartsAverageRise()
+   this.optionChart3 = await this.charts.setOptionsChartsAverageRise()
   }
 
   openMachineDetailModal(){
@@ -121,7 +122,29 @@ export class HomeComponent implements OnInit {
 
   }
 
+  async machinePick(picked:MachineGPS){
 
+    this.resService.presentLoader()
+
+    this.machinePicked = `${picked.name} (${picked.plate})`
+    this.charts.plate = picked.plate // para filtrar toda la data por numero de placa de bus
+    document.getElementById('btnAccordion3')?.click()
+    this.optionChart3 = await this.charts.setOptionsChartsAverageRise()
+
+    this.resService.closeLoader()
+  }
+
+  async restore(){
+
+    this.resService.presentLoader()
+
+    this.machinePicked = undefined
+    this.charts.plate = undefined
+    document.getElementById('btnAccordion3')?.click()
+    this.optionChart3 = await this.charts.setOptionsChartsAverageRise()
+
+    this.resService.closeLoader()
+  }
 
   filter(){
     console.log(this.rangeDatePicker.value)

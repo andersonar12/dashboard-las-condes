@@ -2,15 +2,18 @@ import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { EChartsOption } from 'echarts';
 import { ChartsService } from '../../services/charts.service';
-import * as echarts from 'echarts';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import * as XLSX from 'xlsx';
 import { ResourcesService } from '../../services/resources.service';
 import { forkJoin, Subscription } from 'rxjs';
+import { MachineGPS, TotalPasajeros, PromedioPasajeros } from '../../interfaces/interfaces';
+
+import * as echarts from 'echarts';
+import * as XLSX from 'xlsx';
 import * as moment from 'moment';
-import { MachineGPS } from '../../interfaces/interfaces';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 @Component({
   selector: 'app-statistics',
@@ -57,7 +60,7 @@ export class StatisticsComponent implements OnInit {
 
 
   async getChartData(){
-    let ch = this.charts
+    
     const res = this.resService
 
     this.dataChartsSub = forkJoin([this.charts.getTotalPassengers('today'),this.charts.getAveragePassengersByTimeToday(),this.resService.getDevicesGPS(),this.charts.getTotalActiveMachinesToday()]).
@@ -76,8 +79,8 @@ export class StatisticsComponent implements OnInit {
     },(err)=>{console.log(err);res.closeLoader()})
 
 
-    this.optionChart1 = await ch.setOptionsChartsBoardingPassengers()
-    this.optionChart2 = ch.setOptionsChartsBarDisembarkationPassengers()
+    this.optionChart1 = await this.charts.setOptionsChartsBoardingPassengers()
+    this.optionChart2 = await this.charts.setOptionsChartsBarDisembarkationPassengers()
     
    }
 
@@ -99,42 +102,40 @@ export class StatisticsComponent implements OnInit {
 
   async filterData(date:'today'|'this_week'|'this_month'){
 
-    const ch = this.charts
     document.getElementById('btnAccordion2')?.click()
     this.resService.presentLoader()
 
-    
+    const renderData = (res:TotalPasajeros,res2:PromedioPasajeros[],res3:any,res4:any) =>{
+      this.totalPassengers = (res == null) ?  '0' : res.total_pasajeros
+      this.averagePassengers = (res2.length == 0) ?  '0' : this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
+      this.optionChart1 = res3
+      this.optionChart2 = res4
+      this.resService.closeLoader()
+    }
+
 
     if (date == 'today') {
-      Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getAveragePassengersByTimeToday().toPromise(),ch.setOptionsChartsBoardingPassengers()])
-      .then(([res,res2,res3])=>{
-        
+      Promise.all([this.charts.getTotalPassengers(date).toPromise(),this.charts.getAveragePassengersByTimeToday().toPromise(),this.charts.setOptionsChartsBoardingPassengers(),
+        this.charts.setOptionsChartsBarDisembarkationPassengers()])
+      .then(([res,res2,res3,res4])=>{
+
+        renderData(res,res2,res3,res4)
       
-        this.totalPassengers = (res == null) ?  '0' : res.total_pasajeros
-        this.averagePassengers = (res2.length == 0) ?  '0' : this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
-        this.optionChart1 = res3
-        this.resService.closeLoader()
       })
     }
 
     if (date == 'this_week') {
-      Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getAveragePassengersByDay(date).toPromise(),ch.setOptionsChartsBoardingPassengers(date)])
-      .then(async([res,res2,res3])=>{
-        this.totalPassengers = (res == null) ?  '0' : res.total_pasajeros
-        this.averagePassengers = (res2.length == 0) ?  '0' : this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
-        this.optionChart1 = res3
-        this.resService.closeLoader()
+      Promise.all([this.charts.getTotalPassengers(date).toPromise(),this.charts.getAveragePassengersByDay(date).toPromise(),this.charts.setOptionsChartsBoardingPassengers(date),this.charts.setOptionsChartsBarDisembarkationPassengers(date)])
+      .then(([res,res2,res3,res4])=>{
+        renderData(res,res2,res3,res4)
       })
       
     }
 
     if (date == 'this_month') {
-      Promise.all([ch.getTotalPassengers(date).toPromise(),ch.getAveragePassengersByDay(date).toPromise(),ch.setOptionsChartsBoardingPassengers(date)])
-      .then(([res,res2,res3])=>{
-        this.totalPassengers = (res == null) ?  '0' : res.total_pasajeros
-        this.averagePassengers = (res2.length == 0) ?  '0': this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
-        this.optionChart1 = res3 
-        this.resService.closeLoader()
+      Promise.all([this.charts.getTotalPassengers(date).toPromise(),this.charts.getAveragePassengersByDay(date).toPromise(),this.charts.setOptionsChartsBoardingPassengers(date),this.charts.setOptionsChartsBarDisembarkationPassengers(date)])
+      .then(([res,res2,res3,res4])=>{
+        renderData(res,res2,res3,res4)
       })
     }
 
@@ -158,19 +159,20 @@ export class StatisticsComponent implements OnInit {
     console.log(start_date, end_date)
 
     Promise.all([this.charts.getTotalPassengersByRangeDate(start_date,end_date).toPromise(),
+      this.charts.getAveragePassengersByDayByRange(start_date,end_date).toPromise(),
       this.charts.setOptionsChartsBoardingPassengers(undefined,start_date,end_date),
-      this.charts.getAveragePassengersByDayByRange(start_date,end_date).toPromise()])
-     .then(([res1,res2,res3])=>{
-       
+      this.charts.setOptionsChartsBarDisembarkationPassengers(undefined,start_date,end_date),
+    ])
+     .then(([res1,res2,res3,res4])=>{
        this.totalPassengers = res1.total_pasajeros
-       this.optionChart1 = res2
-       this.averagePassengers = this.calculateAverage(res3.map(item=>+item.promedio_pasajeros)).replace('.',',')
+       this.averagePassengers = this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
+       this.optionChart1 = res3
+       this.optionChart2 = res4
        this.resService.closeLoader()
      })
 
-    
     document.getElementById('btnAccordion2')?.click()
-    
+
   }
 
   machinePick(picked:MachineGPS){
@@ -198,7 +200,25 @@ export class StatisticsComponent implements OnInit {
   calculateAverage = (data:Array<number>) => (data.reduce((prev, current) => prev + current, 0) / data.length).toFixed(2)
   
 
-  exportData(){
+  async exportData(){
+    this.resService.presentLoader()
+    //Para exportar a PDF las graficas
+    let DATA = document.getElementById('htmlData')!;
+    
+    await html2canvas(DATA).then(canvas => {
+        
+        /* let fileWidth = 290;
+        let fileHeight = canvas.height * fileWidth / canvas.width; */
+        
+        const FILEURI = canvas.toDataURL('image/png')
+        let PDF = new jsPDF('l', 'pt', 'a4');
+        let position = 0; 
+        let pageSize = PDF.internal.pageSize
+        PDF.addImage(FILEURI, 'PNG', 0, position, pageSize.getWidth(), pageSize.getHeight() )
+        
+        PDF.save('estadisticas.pdf');
+    });  
+    //Para exportar a PDF las graficas
 
     //Exporta a Excel
     const props:any = {
@@ -224,12 +244,13 @@ export class StatisticsComponent implements OnInit {
       
       return object
     })
-    console.log(dataForXLSX);
+   /*  console.log(dataForXLSX); */
 
     const workSheet = XLSX.utils.json_to_sheet(dataForXLSX, { header: ['Hora de Salida','Nro. Máquina / Patente','Ruta'] })
     const workBook: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workBook, workSheet, 'Maquinas');
     XLSX.writeFile(workBook, 'report.xlsx');
+    this.resService.closeLoader()
   }
 
 }

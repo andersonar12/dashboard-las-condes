@@ -45,9 +45,9 @@
 
 <div class="filters p-2">
     <p class="text-center text-black mb-1" style="letter-spacing: 4px; font-size: 13px;">FILTRAR POR:</p>
-    <div class="row">
+    <div class="row d-flex justify-content-center">
 
-        <div class="col-7 ">
+        <div class="col-7 " style="display: none;">
             <div class=" accordion accordion-filters w-100" id="accordionExample2">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingTwo">
@@ -109,27 +109,21 @@
 
         </div>
 
-        <div class="col-5">
+        <div class="col"><!--col-5  -->
             <div class="col-6 accordion accordion-filters w-100" id="accordionExample3">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingThree">
                         <button class="accordion-button collapsed p-2" id="btnAccordion3" type="button"
                             data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="true"
                             aria-controls="collapseThree">
-                            <p class="text-black mb-0 text-center w-100" style="font-size: 16px;"><strong>Nro. de
-                                    máquina o Patente</strong> </p>
+                            <p class="text-black mb-0 text-center w-100" style="font-size: 16px;" ><strong>{{(machinePicked) ? machinePicked : ' Nro. de máquina o Patente'}}</strong> </p>
                         </button>
                     </h2>
                     <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
                         data-bs-parent="#accordionExample3">
                         <div class="accordion-body py-2">
-                            <p class="fs-6 text-black mb-1 text-center machine-items" (click)="showBusStops()">3344
-                                (BB-CL-34)</p>
-                            <p class="fs-6 text-black mb-1 text-center machine-items">1567 (LE-LE-22)</p>
-                            <p class="fs-6 text-black mb-1 text-center machine-items">4685 (GK-BB-10)</p>
-                            <p class="fs-6 text-black mb-1 text-center machine-items">3344 (BB-CL-34)</p>
-                            <p class="fs-6 text-black mb-1 text-center machine-items">3344 (BK-XZ-83)</p>
-                            <p class="fs-6 text-black mb-1 text-center machine-items">1567 (AB-XX-25)</p>
+                            <p class="fs-6 text-black mb-1 text-center machine-items" (click)="restore()">Todos</p>
+                            <p class="fs-6 text-black mb-1 text-center machine-items" (click)="machinePick(machine)" *ngFor="let machine of machines">{{machine.name}} ({{machine.plate}})</p>
                         </div>
                     </div>
                 </div>
@@ -165,7 +159,9 @@
     <agm-marker [latitude]="machine.lpf.lat" [longitude]="machine.lpf.lng" [iconUrl]="'assets/images/Grupo '+machine.marker+'.png'" *ngFor="let machine of machines"> <!-- (mouseOver)="onMouseOver(infoWindow,gm)" -->
         <agm-info-window [disableAutoPan]="false" #infoWindow>
             <p class="pb-0 mb-0 fs-6"><strong>Maquina:</strong>{{machine.name}} ({{machine.plate}})</p>
-            <p class="pb-0 mb-0 fs-6"><strong>Pasajeros: 35</strong></p>
+            <p class="pb-0 mb-0 fs-6 text-decoration-underline"><strong>Pasajeros: </strong></p>
+            <p class="pb-0 mb-0" style="font-size: 16px;">Ingreso: - </p>
+            <p class="pb-0 mb-0" style="font-size: 16px;">Salida: - </p>
             <div class="d-flex justify-content-end mb-1">
 
                 <button class="btn btn-primary d-flex align-items-center" (click)="openMachineDetailModal()" type="button"><mat-icon>assignment</mat-icon></button>
@@ -212,7 +208,7 @@
 
             <div class="col-12 p-4 text-black">
                 <p class="mb-0" style="font-size: 18px;">Promedio de subida:</p>
-                <p class="mb-0" style="font-size: 30px;"><strong>30 <span style="font-size: 12px;">(Por cada
+                <p class="mb-0" style="font-size: 30px;"><strong>{{this.charts.averageRise}}<span style="font-size: 12px;">(Por cada
                             detención)</span></strong> </p>
 
                 <div *ngIf="optionChart3">
