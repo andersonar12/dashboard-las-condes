@@ -63,10 +63,17 @@ export class HomeComponent implements OnInit {
   }
 
   getDevicesGPS(){
-    this.resService.getDevicesGPS().toPromise()
-      .then(({data})=>{
+    Promise.all([this.resService.getDevicesGPS().toPromise(),this.mapService.getTotalCurrentPassengers().toPromise()]).then(([{data},res2])=>{
+        console.log('Buses',data)
+        console.log('Pasajeros Vuelta Actual',res2)
         let index = 0
         this.machines = data.map((machine)=>{
+          
+          // asociamos la cantidad de pasajeros en vuelta actual a cada bus
+          const machineFind = res2.find((c)=> c.plate == machine.plate)
+          if (machineFind)  machine['current_passengers'] = machineFind
+          // asociamos la cantidad de pasajeros en vuelta actual a cada bus
+
           // Aqui en este .map() asignamos los colores de los marcadores a cada bus <--
           if (index >= this.markers.length){ 
             index = 0
@@ -78,7 +85,7 @@ export class HomeComponent implements OnInit {
 
           return machine // --> Aqui en este .map() asignamos los colores de los marcadores a cada bus
         })
-        console.log(this.machines)
+        
         this.resService.closeLoader()
       }).catch((e)=>this.resService.closeLoader())
   }

@@ -2,15 +2,17 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { environment } from "../../environments/environment";
+import { PasajerosActualesPorBus } from '../interfaces/interfaces';
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
+  public contadorApiUrl = environment.contadorApiUrl +'/api'
+  public plate!:string | undefined
 
   constructor(private http: HttpClient) { }
   
   getAddress(lat:string|number,lng:string|number) {
-
 
     /* let latitud = 19.4978;
     let longitud = -99.1269; */
@@ -22,6 +24,16 @@ export class MapService {
                                     .set('key',environment.APIGoogleMaps)
 
     return this.http.post<any>(url, null, { params })
+  }
+
+  getTotalCurrentPassengers() {
+    const endpoint = `${this.contadorApiUrl}/total_current_passengers`;
+    let params
+    if(this.plate){
+      params = new HttpParams().set('plate', this.plate)
+    }
+
+    return this.http.get<PasajerosActualesPorBus[]>(endpoint,{ params })
   }
 
 }

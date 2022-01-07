@@ -11,7 +11,7 @@ import {  ResponseDevicesGPS } from '../interfaces/interfaces';
 })
 export class ResourcesService {
   
-  public contadorApiUrl = environment.contadorApiUrl +'/api/'
+
  
   constructor(private http: HttpClient) {}
 

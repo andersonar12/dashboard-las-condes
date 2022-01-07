@@ -18,6 +18,12 @@ export interface PromedioPasajeros {
     promedio_pasajeros: string;
 }
 
+export interface PasajerosActualesPorBus {
+    enters: number;
+    exits: number;
+    plate: string;
+}
+
 
 ////////////////// Dispositivos Buses LiveGPS ////////////////////
 export interface AreaNegocio {
@@ -76,6 +82,7 @@ export interface MachineGPS {
     marker?:string;
     company: Company;
     contract?: any;
+    current_passengers?:PasajerosActualesPorBus
     dev_brand: string;
     dev_model: string;
     engine_type: string;

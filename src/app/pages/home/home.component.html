@@ -160,8 +160,8 @@
         <agm-info-window [disableAutoPan]="false" #infoWindow>
             <p class="pb-0 mb-0 fs-6"><strong>Maquina:</strong>{{machine.name}} ({{machine.plate}})</p>
             <p class="pb-0 mb-0 fs-6 text-decoration-underline"><strong>Pasajeros: </strong></p>
-            <p class="pb-0 mb-0" style="font-size: 16px;">Ingreso: - </p>
-            <p class="pb-0 mb-0" style="font-size: 16px;">Salida: - </p>
+            <p class="pb-0 mb-0" style="font-size: 16px;">Ingreso: {{machine.current_passengers?.enters}} </p>
+            <p class="pb-0 mb-0" style="font-size: 16px;">Salida: {{machine.current_passengers?.exits}}  </p>
             <div class="d-flex justify-content-end mb-1">
 
                 <button class="btn btn-primary d-flex align-items-center" (click)="openMachineDetailModal()" type="button"><mat-icon>assignment</mat-icon></button>
