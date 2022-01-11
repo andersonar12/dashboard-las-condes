@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { ResponseAuthLiveGps } from '../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -16,12 +17,12 @@ export class AuthService {
     const endpoint = 'https://socketgpsv1.witservices.io/api/gestsol-auth';
     const credenciales = { username: 'lascondes', password: 'lascondes' };
 
-    return this.http.post(endpoint, credenciales).pipe(
-      map((key: any) => {
-        let resp;
+    return this.http.post<ResponseAuthLiveGps>(endpoint, credenciales).pipe(
+      map((key) => {
 
         if (key.hasOwnProperty('error')) {
-          alert(`Error Live GPS, ${key.error}`);
+          alert(`Error Live GPS, ${JSON.stringify(key) }`);
+          throw new Error(JSON.stringify(key));
         } else {
           localStorage.removeItem('tokenLiveGPS');
           localStorage.setItem('tokenLiveGPS', JSON.stringify(key));

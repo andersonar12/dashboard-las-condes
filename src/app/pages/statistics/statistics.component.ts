@@ -253,4 +253,10 @@ export class StatisticsComponent implements OnInit {
     this.resService.closeLoader()
   }
 
+  ngOnDestroy(){
+    if (this.dataChartsSub) {
+      this.dataChartsSub.unsubscribe()
+    }
+  }
+
 }

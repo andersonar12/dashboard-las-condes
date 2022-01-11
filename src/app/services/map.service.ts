@@ -17,8 +17,7 @@ export class MapService {
     /* let latitud = 19.4978;
     let longitud = -99.1269; */
     const url = 'https://maps.googleapis.com/maps/api/geocode/json'
-    /* ?latlng=' + latitud + ',' + longitud
-        + '&key=TU_LLAVE_API_DE_GOOGLE_MAPS' */;
+    /* ?latlng=' + latitud + ',' + longitud+ '&key=TU_LLAVE_API_DE_GOOGLE_MAPS' */;
 
     const params = new HttpParams().set('latlng', `${lat},${lng}`)
                                     .set('key',environment.APIGoogleMaps)

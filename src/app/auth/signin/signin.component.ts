@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators,FormControl, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
+import { zip } from 'rxjs';
 import Swal from 'sweetalert2'
 import { AuthService } from '../../services/auth.service';
 @Component({
@@ -28,9 +29,18 @@ export class SigninComponent implements OnInit {
   signIn(){
 
     console.log(this.formGroup.value)
-    /* this.presentLoader() */
+    this.presentLoader()
     
-    this.router.navigateByUrl('/pages/home')
+    Promise.all([this.authService.signInGPS().toPromise()])
+    .then(([resp]) => {
+
+      console.log(resp);
+      this.router.navigateByUrl('/pages/home')
+    }).catch((e) => {
+      console.log(e)
+      /* alert(`Error Live GPS, ${e}`); */
+      Swal.close();
+    });
 
     return
     this.authService.signIn(this.formGroup.value).toPromise().then((resp)=>{
