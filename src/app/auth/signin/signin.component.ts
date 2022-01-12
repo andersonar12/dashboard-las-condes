@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators,FormControl, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { zip } from 'rxjs';
 import Swal from 'sweetalert2'
 import { AuthService } from '../../services/auth.service';
 @Component({
@@ -30,7 +29,9 @@ export class SigninComponent implements OnInit {
 
     console.log(this.formGroup.value)
     this.presentLoader()
-    
+
+    localStorage.setItem('token', JSON.stringify({token:'token_de_prueba'}));
+
     Promise.all([this.authService.signInGPS().toPromise()])
     .then(([resp]) => {
 

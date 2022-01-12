@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { EChartsOption } from 'echarts';
 import * as echarts from 'echarts';
@@ -493,10 +493,9 @@ export class ChartsService {
 
   //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
   getTotalPassengers(date:'today'|'this_week'|'this_month') {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.contadorApiUrl}/total_passengers`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-
+    
     let obj:any = {}
 
     obj['date'] = date
@@ -505,14 +504,13 @@ export class ChartsService {
 
     let params = new HttpParams({ fromObject: obj })
 
-    return this.http.get<TotalPasajeros>(endpoint, { headers: headers, params })
+    return this.http.get<TotalPasajeros>(endpoint, { params })
   }
 
   getTotalPassengersByRangeDate(start_date: string, end_date: string) {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.contadorApiUrl}/total_passengers`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-
+    
     let obj:any= {}
 
     obj['start_date'] = start_date
@@ -523,14 +521,13 @@ export class ChartsService {
 
     let params = new HttpParams({ fromObject: obj })
 
-    return this.http.get<TotalPasajeros>(endpoint, { headers: headers, params })
+    return this.http.get<TotalPasajeros>(endpoint, { params })
   }
 //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
 
   getTotalPassengersByTimeToday(event_type?:'enter'|'exit') {//Este da como resultado un array por horas
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
 
     let obj:any= {}
 
@@ -541,14 +538,13 @@ export class ChartsService {
 
     let params = new HttpParams({ fromObject: obj })
 
-    return this.http.get<TotalPorHoraDeHoy[]>(endpoint, { headers: headers, params })//Este da como resultado un array por horas
+    return this.http.get<TotalPorHoraDeHoy[]>(endpoint, { params })//Este da como resultado un array por horas
   }
 
   getTotalPassengersByDay(date:'today'|'this_week'|'this_month',event_type?:'enter'|'exit') {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-
+    
     let obj:any= {}
 
     obj['date'] = date
@@ -558,13 +554,12 @@ export class ChartsService {
 
     let params = new HttpParams({fromObject: obj })
 
-    return this.http.get<TotalPorDia[]>(endpoint, { headers: headers, params })
+    return this.http.get<TotalPorDia[]>(endpoint, { params })
   }
 
   getTotalPassengersByDayByRange(start_date:string,end_date:string,event_type?:'enter'|'exit') {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
 
     let obj:any= {}
 
@@ -576,17 +571,16 @@ export class ChartsService {
 
     let params = new HttpParams({fromObject: obj })
 
-    return this.http.get<TotalPorDia[]>(endpoint, { headers: headers, params })
+    return this.http.get<TotalPorDia[]>(endpoint, { params })
   }
 
 
   /* Para obtener Promedio de Pasajeros */
 
   getAveragePassengersByTimeToday() {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.contadorApiUrl}/avg_passengers`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-
+    
     let obj:any= {}
 
     obj['date'] ='today'
@@ -595,14 +589,13 @@ export class ChartsService {
 
     let params = new HttpParams({ fromObject: obj })
 
-    return this.http.get<PromedioPasajeros[]>(endpoint, { headers: headers, params })
+    return this.http.get<PromedioPasajeros[]>(endpoint, { params })
   }
 
   getAveragePassengersByDay(date:'today'|'this_week'|'this_month') {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.contadorApiUrl}/avg_passengers`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-
+    
     let obj:any= {}
 
     obj['date'] = date
@@ -611,14 +604,13 @@ export class ChartsService {
 
     let params = new HttpParams({ fromObject: obj })
 
-    return this.http.get<PromedioPasajeros[]>(endpoint, { headers: headers, params })
+    return this.http.get<PromedioPasajeros[]>(endpoint, { params })
   }
 
   getAveragePassengersByDayByRange(start_date:string,end_date:string) {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.contadorApiUrl}/avg_passengers`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-
+    
     let obj:any= {}
 
     obj['start_date'] = start_date
@@ -628,19 +620,17 @@ export class ChartsService {
 
     let params = new HttpParams({ fromObject: obj })
 
-    return this.http.get<PromedioPasajeros[]>(endpoint, { headers: headers, params })
+    return this.http.get<PromedioPasajeros[]>(endpoint, { params })
   }
   /* Para obtener Promedio de Pasajeros */
 
   /* Obtener Buses activos  */
 
   getTotalActiveMachinesToday() {//Este da como resultado un array  de buses activo por placa
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
+    
     const endpoint = `${this.contadorApiUrl}/active_vehicles`;
-    const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-
     let params = new HttpParams().set('date', 'today')
 
-    return this.http.get<string[]>(endpoint, { headers: headers, params })
+    return this.http.get<string[]>(endpoint, { params })
   }
 }
