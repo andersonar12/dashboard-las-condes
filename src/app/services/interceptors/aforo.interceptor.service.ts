@@ -3,7 +3,7 @@ import {
   HttpErrorResponse,
   HttpEvent,
   HttpHandler,
-  // HttpHeaders,
+  HttpHeaders,
   HttpInterceptor,
   HttpRequest
 } from '@angular/common/http'
@@ -17,9 +17,22 @@ export class AforoInterceptorService implements HttpInterceptor {
   constructor() {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // TODO: crear logica para interceptar las peticiones de los servicios de aforo
+  
+    const token = localStorage.getItem('token')!;
+    let request = req;
+    let url = request.url.split('//')[1]
 
-    return next.handle(req).pipe(
+    if (token && url.indexOf('contador-personas') >= 0) {
+
+      const tokenParse = JSON.parse(token)?.token
+      request = req.clone({
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${ tokenParse }`
+        }),
+      });
+    }
+
+    return next.handle(request).pipe(
       catchError((err: HttpErrorResponse) => {
         console.error('REQUEST-AFORO-ERROR ->', err.message)
 

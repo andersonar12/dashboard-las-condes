@@ -10,6 +10,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
 
 import { LiveGpsInterceptorService } from '@SERVICES/interceptors/liveGps.interceptor.service';
+import { AforoInterceptorService } from './services/interceptors/aforo.interceptor.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { LiveGpsInterceptorService } from '@SERVICES/interceptors/liveGps.interc
   ],
   providers: [
     AuthGuard,{provide: MAT_DATE_LOCALE, useValue: 'es-ES'},
-    { provide: HTTP_INTERCEPTORS, useClass: LiveGpsInterceptorService, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: LiveGpsInterceptorService, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AforoInterceptorService, multi: true }
   ],
   bootstrap: [AppComponent]
 })
