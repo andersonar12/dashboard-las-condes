@@ -1,19 +1,17 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { EChartsOption } from 'echarts';
-import { Observable, } from 'rxjs';
-import { delay, map, retryWhen, take } from 'rxjs/operators';
 import * as echarts from 'echarts';
-import Swal from 'sweetalert2'
 import { environment } from '../../environments/environment';
-import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy, PromedioPasajeros, ResponseDevicesGPS } from '../interfaces/interfaces';
-import { Router, Event, NavigationStart, NavigationEnd, NavigationError } from '@angular/router';
+import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy, PromedioPasajeros } from '../interfaces/interfaces';
+import { Router, Event, NavigationStart, NavigationError } from '@angular/router';
+
+import { LiveGpsService } from '@SERVICES/liveGps.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ChartsService {
-
   public contadorApiUrl = environment.contadorApiUrl +'/api'
   public plate!:string | undefined
   public totalBusesActive!: string | number
@@ -21,10 +19,10 @@ export class ChartsService {
   public averageRise:string = '0'
   /* public totalBusesInactive!: string | number */
 
-  constructor(private http: HttpClient,private router: Router) {
+  constructor(private http: HttpClient,private router: Router, private resService: LiveGpsService) {
     //Aqui podemos escuchar cuando se cambia de ruta en la aplicacion
     this.router.events.subscribe((event: Event) => {
-      if (event instanceof NavigationStart) {   
+      if (event instanceof NavigationStart) {
           this.plate = undefined
       }
 
@@ -34,7 +32,7 @@ export class ChartsService {
       } */
   });
   }
-  
+
   async setOptionsChartsPassengers() {
 
     let data:any
@@ -112,11 +110,11 @@ export class ChartsService {
 
     let data:any
 
-    const percentageCalculator = (amount:number , total:number,)=> {       
+    const percentageCalculator = (amount:number , total:number,)=> {
       return ((amount * 100) / total).toFixed(2)
    }
 
-    await Promise.all([this.getTotalActiveMachinesToday().toPromise(),this.getDevicesGPS().toPromise()]) 
+    await Promise.all([this.getTotalActiveMachinesToday().toPromise(), this.resService.getDevicesGPS().toPromise()])
           .then(([resp,resp2])=>{
 
             let activeBuses = resp // arreglo por placas buses en recorrido o activos
@@ -146,7 +144,7 @@ export class ChartsService {
 
 
             data = {activePercentage,totalBusesActive,totalBusesInactive}
-          }) 
+          })
 
     const options: EChartsOption = {
       title: [
@@ -182,7 +180,7 @@ export class ChartsService {
                 show: true,
                 fontSize: "10",
                 fontWeight: "bold"
-              } 
+              }
             },*/
           labelLine: {
             show: false,
@@ -294,26 +292,26 @@ export class ChartsService {
     if (date) { // para obtener total pasajeros por dia de la semana o mes
       await this.getTotalPassengersByDay(date,'enter').toPromise().then((resp)=>{
         console.log('Subida',resp)
-        dataX = resp.map((i:any)=>i.date) 
-        dataY = resp.map((i:any)=>i.enters) 
+        dataX = resp.map((i:any)=>i.date)
+        dataY = resp.map((i:any)=>i.enters)
       })
 
     } else if(start_date && end_date){ // para obtener total pasajeros por rango de fecha
       await this.getTotalPassengersByDayByRange(start_date, end_date,'enter').toPromise().then((resp)=>{
         console.log('Subida',resp)
-        dataX = resp.map((i:any)=>i.date) 
-        dataY = resp.map((i:any)=>i.enters) 
+        dataX = resp.map((i:any)=>i.date)
+        dataY = resp.map((i:any)=>i.enters)
       })
     }
     else { //total pasajeros por hora de hoy
       await this.getTotalPassengersByTimeToday('enter').toPromise().then((resp)=>{
         console.log('Subida',resp)
-        dataX = resp.map((i:any)=>i.hour+':00') 
-        dataY = resp.map((i:any)=>i.pasajeros) 
+        dataX = resp.map((i:any)=>i.hour+':00')
+        dataY = resp.map((i:any)=>i.pasajeros)
       })
 
     }
-    
+
     const options: EChartsOption = {
       xAxis: {
         type: 'category',
@@ -410,22 +408,22 @@ export class ChartsService {
     if (date) { // para obtener total pasajeros por dia de la semana o mes
       await this.getTotalPassengersByDay(date,'exit').toPromise().then((resp)=>{
         console.log('Bajada',resp)
-        dataX = resp.map((i:any)=>i.date) 
-        dataY = resp.map((i:any)=>i.enters) 
+        dataX = resp.map((i:any)=>i.date)
+        dataY = resp.map((i:any)=>i.enters)
       })
 
     } else if(start_date && end_date){ // para obtener total pasajeros por rango de fecha
       await this.getTotalPassengersByDayByRange(start_date, end_date,'exit').toPromise().then((resp)=>{
         console.log('Bajada',resp)
-        dataX = resp.map((i:any)=>i.date) 
-        dataY = resp.map((i:any)=>i.enters) 
+        dataX = resp.map((i:any)=>i.date)
+        dataY = resp.map((i:any)=>i.enters)
       })
     }
     else { //total pasajeros por hora de hoy
       await this.getTotalPassengersByTimeToday('exit').toPromise().then((resp)=>{
         console.log('Bajada',resp)
-        dataX = resp.map((i:any)=>i.hour+':00') 
-        dataY = resp.map((i:any)=>i.pasajeros) 
+        dataX = resp.map((i:any)=>i.hour+':00')
+        dataY = resp.map((i:any)=>i.pasajeros)
       })
 
     }
@@ -493,7 +491,7 @@ export class ChartsService {
 
   ///////////////////////////////PETICIONES/////////////////////////////////////////
 
-  //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total 
+  //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
   getTotalPassengers(date:'today'|'this_week'|'this_month') {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/total_passengers`;
@@ -504,7 +502,7 @@ export class ChartsService {
     obj['date'] = date
     obj['event_type'] = 'enter'
     if (this.plate)  obj['plate'] = this.plate
-      
+
     let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<TotalPasajeros>(endpoint, { headers: headers, params })
@@ -522,9 +520,9 @@ export class ChartsService {
     obj['event_type'] = 'enter'
 
     if (this.plate)  obj['plate'] = this.plate
-      
+
     let params = new HttpParams({ fromObject: obj })
-    
+
     return this.http.get<TotalPasajeros>(endpoint, { headers: headers, params })
   }
 //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
@@ -540,7 +538,7 @@ export class ChartsService {
 
     if (this.plate)  obj['plate'] = this.plate
     if (event_type)  obj['event_type'] = event_type
-      
+
     let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<TotalPorHoraDeHoy[]>(endpoint, { headers: headers, params })//Este da como resultado un array por horas
@@ -550,14 +548,14 @@ export class ChartsService {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-   
+
     let obj:any= {}
 
     obj['date'] = date
 
     if (this.plate)  obj['plate'] = this.plate
     if (event_type)  obj['event_type'] = event_type
-      
+
     let params = new HttpParams({fromObject: obj })
 
     return this.http.get<TotalPorDia[]>(endpoint, { headers: headers, params })
@@ -567,7 +565,7 @@ export class ChartsService {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-                                
+
     let obj:any= {}
 
     obj['start_date'] = start_date
@@ -575,7 +573,7 @@ export class ChartsService {
 
     if (this.plate)  obj['plate'] = this.plate
     if (event_type)  obj['event_type'] = event_type
-      
+
     let params = new HttpParams({fromObject: obj })
 
     return this.http.get<TotalPorDia[]>(endpoint, { headers: headers, params })
@@ -594,7 +592,7 @@ export class ChartsService {
     obj['date'] ='today'
     obj['event_type'] = 'enter'
     if (this.plate)  obj['plate'] = this.plate
-      
+
     let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<PromedioPasajeros[]>(endpoint, { headers: headers, params })
@@ -604,13 +602,13 @@ export class ChartsService {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/avg_passengers`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-    
+
     let obj:any= {}
 
     obj['date'] = date
     obj['event_type'] = 'enter'
     if (this.plate)  obj['plate'] = this.plate
-      
+
     let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<PromedioPasajeros[]>(endpoint, { headers: headers, params })
@@ -620,14 +618,14 @@ export class ChartsService {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/avg_passengers`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-  
+
     let obj:any= {}
 
     obj['start_date'] = start_date
     obj['end_date'] = end_date
     obj['event_type'] = 'enter'
     if (this.plate)  obj['plate'] = this.plate
-      
+
     let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<PromedioPasajeros[]>(endpoint, { headers: headers, params })
@@ -640,23 +638,9 @@ export class ChartsService {
     const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
     const endpoint = `${this.contadorApiUrl}/active_vehicles`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
-  
+
     let params = new HttpParams().set('date', 'today')
-  
+
     return this.http.get<string[]>(endpoint, { headers: headers, params })
-  }
-
-  ///////////////////////////////PETICIONES/////////////////////////////////////////
-
-  getDevicesGPS(){ //para obtener un array de Buses pertenecientes a la Localidad de las COndes
-   
-    const endpoint = 'https://socketgpsv1.witservices.io/sapi/devices';
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('tokenLiveGPS')!).access_token
-    })
-    return this.http.get<ResponseDevicesGPS>(endpoint, { headers: headers }).pipe(
-      retryWhen( err => err.pipe(delay(1000),take(2) )) 
-    )
   }
 }

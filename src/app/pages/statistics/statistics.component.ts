@@ -5,7 +5,7 @@ import { ChartsService } from '../../services/charts.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { ResourcesService } from '../../services/resources.service';
+import { LiveGpsService } from '../../services/liveGps.service';
 import { forkJoin, Subscription } from 'rxjs';
 import { MachineGPS, TotalPasajeros, PromedioPasajeros } from '../../interfaces/interfaces';
 
@@ -40,8 +40,8 @@ export class StatisticsComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
-  constructor(private cd: ChangeDetectorRef, public charts:ChartsService, public resService: ResourcesService) { 
-    
+  constructor(private cd: ChangeDetectorRef, public charts:ChartsService, public resService: LiveGpsService) {
+
   }
 
   public rangeDatePicker = new FormGroup({
@@ -60,14 +60,14 @@ export class StatisticsComponent implements OnInit {
 
 
   async getChartData(){
-    
+
     const res = this.resService
 
     this.dataChartsSub = forkJoin([this.charts.getTotalPassengers('today'),this.charts.getAveragePassengersByTimeToday(),this.resService.getDevicesGPS(),this.charts.getTotalActiveMachinesToday()]).
     subscribe(([res1,res2,{data},res4])=>{
       console.log('Statistics Today',[res1,res2,data,])
 
-      //Total de pasajeros 
+      //Total de pasajeros
       this.totalPassengers =(res == null) ?  '0' : res1['total_pasajeros']
       //Promedio de Pasajeros
       this.averagePassengers = (res2.length == 0) ?  '0':this.calculateAverage(res2.map(item=>+item.promedio_pasajeros)).replace('.',',')
@@ -81,7 +81,7 @@ export class StatisticsComponent implements OnInit {
 
     this.optionChart1 = await this.charts.setOptionsChartsBoardingPassengers()
     this.optionChart2 = await this.charts.setOptionsChartsBarDisembarkationPassengers()
-    
+
    }
 
   getData() {
@@ -120,7 +120,7 @@ export class StatisticsComponent implements OnInit {
       .then(([res,res2,res3,res4])=>{
 
         renderData(res,res2,res3,res4)
-      
+
       })
     }
 
@@ -129,7 +129,7 @@ export class StatisticsComponent implements OnInit {
       .then(([res,res2,res3,res4])=>{
         renderData(res,res2,res3,res4)
       })
-      
+
     }
 
     if (date == 'this_month') {
@@ -142,20 +142,20 @@ export class StatisticsComponent implements OnInit {
   }
 
   filterByDatePicker(){
-    
+
     this.resService.presentLoader()
     let params = this.rangeDatePicker.value
 
     params.start_date = moment(params.start_date).format("YYYY-MM-DD")
     params.end_date = moment(params.end_date).format("YYYY-MM-DD")
-    params.startTime = (params.startTime.indexOf(':59')> 0) ? params.startTime : params.startTime + ':59'  
+    params.startTime = (params.startTime.indexOf(':59')> 0) ? params.startTime : params.startTime + ':59'
     params.endTime =  (params.endTime.indexOf(':59')> 0) ? params.endTime : params.endTime + ':59'
-   
+
     /* console.log(params) */
 
     const start_date = params.start_date+' '+params.startTime
     const end_date = params.end_date+' '+params.endTime
-    
+
     console.log(start_date, end_date)
 
     Promise.all([this.charts.getTotalPassengersByRangeDate(start_date,end_date).toPromise(),
@@ -198,33 +198,33 @@ export class StatisticsComponent implements OnInit {
 
   //Calcular Promedio pasando un array de numeros como data
   calculateAverage = (data:Array<number>) => (data.reduce((prev, current) => prev + current, 0) / data.length).toFixed(2)
-  
+
 
   async exportData(){
     this.resService.presentLoader()
     //Para exportar a PDF las graficas
     let DATA = document.getElementById('htmlData')!;
-    
+
     await html2canvas(DATA).then(canvas => {
-        
+
         /* let fileWidth = 290;
         let fileHeight = canvas.height * fileWidth / canvas.width; */
-        
+
         const FILEURI = canvas.toDataURL('image/png')
         let PDF = new jsPDF('l', 'pt', 'a4');
-        let position = 0; 
+        let position = 0;
         let pageSize = PDF.internal.pageSize
         PDF.addImage(FILEURI, 'PNG', 0, position, pageSize.getWidth(), pageSize.getHeight() )
-        
+
         PDF.save('estadisticas.pdf');
-    });  
+    });
     //Para exportar a PDF las graficas
 
     //Exporta a Excel
     const props:any = {
-      'time':'Hora de Salida', 
-      'machine':'Nro. Máquina / Patente', 
-      'route':'Ruta', 
+      'time':'Hora de Salida',
+      'machine':'Nro. Máquina / Patente',
+      'route':'Ruta',
     }
 
     const dataForXLSX = this.dataSource.data.map((itemObject)=>{
@@ -241,7 +241,7 @@ export class StatisticsComponent implements OnInit {
 
         }
       }
-      
+
       return object
     })
    /*  console.log(dataForXLSX); */
