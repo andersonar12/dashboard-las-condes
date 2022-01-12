@@ -118,9 +118,3 @@ export interface MachineGPS {
     vin?: any;
     year: number;
 }
-
-export interface ResponseDevicesGPS {
-    data: MachineGPS[]
-}
-////////////////// Dispositivos Buses LiveGPS ////////////////////
-

@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MachineModalComponent } from '../../components/machine-modal/machine-modal.component';
 import { MapService } from '../../services/map.service';
 import { AgmMarker } from '@agm/core';
-import { ResourcesService } from '../../services/resources.service';
+import { LiveGpsService } from '../../services/liveGps.service';
 import { MachineGPS } from '../../interfaces/interfaces';
 
 declare var Pushbar: any
@@ -44,7 +44,7 @@ export class HomeComponent implements OnInit {
   public showMachineList = true
   public showBusStopsMarkers = false
 
-  constructor(private cd: ChangeDetectorRef, public charts:ChartsService,public mapService:MapService, public resService: ResourcesService ,public dialog: MatDialog) { }
+  constructor(private cd: ChangeDetectorRef, public charts:ChartsService,public mapService:MapService, public resService: LiveGpsService ,public dialog: MatDialog) { }
 
   ngOnInit() {
     this.pushbar = new Pushbar({ blur: false, overlay: false });
@@ -52,14 +52,14 @@ export class HomeComponent implements OnInit {
     this.getDevicesGPS()
     this.getChartData()
 
-    // este metodo es del API de Google Maps te permite consultar direcciones pasandole lat y lng 
-   
+    // este metodo es del API de Google Maps te permite consultar direcciones pasandole lat y lng
+
     this.mapService.getAddress(-33.40904396097648, -70.56714105961915).toPromise().then((resp) => {
       console.log(resp)
       this.latClickMap = -33.40904396097648
       this.lngClickMap = -70.56714105961915
     }, (e) => console.log(e))
-    // este metodo es del API de Google Maps te permite consultar direcciones pasandole lat y lng 
+    // este metodo es del API de Google Maps te permite consultar direcciones pasandole lat y lng
   }
 
   getDevicesGPS(){
@@ -68,14 +68,14 @@ export class HomeComponent implements OnInit {
         console.log('Pasajeros Vuelta Actual',res2)
         let index = 0
         this.machines = data.map((machine)=>{
-          
+
           // asociamos la cantidad de pasajeros en vuelta actual a cada bus
           const machineFind = res2.find((c)=> c.plate == machine.plate)
           if (machineFind)  machine['current_passengers'] = machineFind
           // asociamos la cantidad de pasajeros en vuelta actual a cada bus
 
           // Aqui en este .map() asignamos los colores de los marcadores a cada bus <--
-          if (index >= this.markers.length){ 
+          if (index >= this.markers.length){
             index = 0
             machine.marker = this.markers[index]
           } else {
@@ -85,7 +85,7 @@ export class HomeComponent implements OnInit {
 
           return machine // --> Aqui en este .map() asignamos los colores de los marcadores a cada bus
         })
-        
+
         this.resService.closeLoader()
       }).catch((e)=>this.resService.closeLoader())
   }
@@ -176,7 +176,7 @@ export class HomeComponent implements OnInit {
   }
 
   hideBusStops(){
-    this.showBusStopsMarkers=false 
+    this.showBusStopsMarkers=false
     this.showToogle = false
   }
 
@@ -185,7 +185,7 @@ export class HomeComponent implements OnInit {
   }
 
 /* Evento click en cualquier parte del mapa */
-  seeCoords(event:any) { 
+  seeCoords(event:any) {
     console.log(event)
     this.latClickMap = event.coords.lat
     this.lngClickMap = event.coords.lng
@@ -195,5 +195,5 @@ export class HomeComponent implements OnInit {
     /* this.aside.nativeElement.style.display = 'none' */
   }
 
-  
+
 }
