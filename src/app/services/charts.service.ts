@@ -8,6 +8,7 @@ import Swal from 'sweetalert2'
 import { environment } from '../../environments/environment';
 import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy, PromedioPasajeros, ResponseDevicesGPS } from '../interfaces/interfaces';
 import { Router, Event, NavigationStart, NavigationEnd, NavigationError } from '@angular/router';
+import { ResourcesService } from './resources.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,7 @@ export class ChartsService {
   public averageRise:string = '0'
   /* public totalBusesInactive!: string | number */
 
-  constructor(private http: HttpClient,private router: Router) {
+  constructor(private http: HttpClient,private router: Router,public resServ:ResourcesService) {
     //Aqui podemos escuchar cuando se cambia de ruta en la aplicacion
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {   
@@ -116,9 +117,9 @@ export class ChartsService {
       return ((amount * 100) / total).toFixed(2)
    }
 
-    await Promise.all([this.getTotalActiveMachinesToday().toPromise(),this.getDevicesGPS().toPromise()]) 
+    await Promise.all([this.getTotalActiveMachinesToday().toPromise(),this.resServ.getDevicesGPS().toPromise()]) 
           .then(([resp,resp2])=>{
-
+            console.log(resp2)
             let activeBuses = resp // arreglo por placas buses en recorrido o activos
             let busFleet:Array<string> = resp2['data'].map((m)=>m.plate) //arreglo mapeado por placas de flota de buses (estacionados)
 
@@ -499,7 +500,7 @@ export class ChartsService {
     const endpoint = `${this.contadorApiUrl}/total_passengers`;
     const headers = new HttpHeaders({ 'Authorization': `Bearer ${token}` })
 
-    let obj:any= {}
+    let obj:any = {}
 
     obj['date'] = date
     obj['event_type'] = 'enter'
@@ -647,16 +648,4 @@ export class ChartsService {
   }
 
   ///////////////////////////////PETICIONES/////////////////////////////////////////
-
-  getDevicesGPS(){ //para obtener un array de Buses pertenecientes a la Localidad de las COndes
-   
-    const endpoint = 'https://socketgpsv1.witservices.io/sapi/devices';
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('tokenLiveGPS')!).access_token
-    })
-    return this.http.get<ResponseDevicesGPS>(endpoint, { headers: headers }).pipe(
-      retryWhen( err => err.pipe(delay(1000),take(2) )) 
-    )
-  }
 }
