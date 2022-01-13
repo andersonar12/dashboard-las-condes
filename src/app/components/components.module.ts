@@ -6,8 +6,11 @@ import {MatIconModule} from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+
+import { TableGeneralComponent } from './table-general/table-general.component';
+
 @NgModule({
-  declarations: [MachineModalComponent],
+  declarations: [MachineModalComponent, TableGeneralComponent],
   imports: [
     CommonModule,
     MatDialogModule,
@@ -15,6 +18,7 @@ import { MatSortModule } from '@angular/material/sort';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule
-  ]
+  ],
+  exports: [ TableGeneralComponent ]
 })
 export class ComponentsModule { }

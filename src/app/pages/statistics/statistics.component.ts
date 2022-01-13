@@ -1,16 +1,10 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { EChartsOption } from 'echarts';
 import { ChartsService } from '../../services/charts.service';
-import { MatTableDataSource } from '@angular/material/table';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import { LiveGpsService } from '../../services/liveGps.service';
 import { forkJoin, Subscription } from 'rxjs';
 import { MachineGPS, TotalPasajeros, PromedioPasajeros } from '../../interfaces/interfaces';
 
-import * as echarts from 'echarts';
-import * as XLSX from 'xlsx';
 import * as moment from 'moment';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -33,16 +27,26 @@ export class StatisticsComponent implements OnInit {
 
   public machines!:MachineGPS[]
   public machinePicked!:string  | undefined
-
-  public displayedColumns: string[] = ['time','machine', 'route'];
-  public dataSource!: MatTableDataSource<any>
   public minDate = new Date()
-  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator;
-  @ViewChild(MatSort, { static: false }) sort!: MatSort;
 
-  constructor(private cd: ChangeDetectorRef, public charts:ChartsService, public resService: LiveGpsService) {
+  public buses: object[] = []
+  public busesFields: TTableField[] = [
+    {
+      label: 'Hora Salida',
+      key: 'time'
+    },
+    {
+      label: 'Nro. Máquina / Patente',
+      key: 'machine'
+    },
+    {
+      label: 'Ruta',
+      key: 'route'
+    }
+  ]
+  public exportXLSX!: Function
 
-  }
+  constructor(private cd: ChangeDetectorRef, public charts:ChartsService, public resService: LiveGpsService) {}
 
   public rangeDatePicker = new FormGroup({
     start_date: new FormControl('',[Validators.required]),
@@ -65,8 +69,6 @@ export class StatisticsComponent implements OnInit {
 
     this.dataChartsSub = forkJoin([this.charts.getTotalPassengers('today'),this.charts.getAveragePassengersByTimeToday(),this.resService.getDevicesGPS(),this.charts.getTotalActiveMachinesToday()]).
     subscribe(([res1,res2,{data},res4])=>{
-      console.log('Statistics Today',[res1,res2,data,])
-
       //Total de pasajeros
       this.totalPassengers =(res == null) ?  '0' : res1['total_pasajeros']
       //Promedio de Pasajeros
@@ -76,7 +78,7 @@ export class StatisticsComponent implements OnInit {
 
       this.machines = data
       res.closeLoader()
-    },(err)=>{console.log(err);res.closeLoader()})
+    },(err)=>{console.error(err);res.closeLoader()})
 
 
     this.optionChart1 = await this.charts.setOptionsChartsBoardingPassengers()
@@ -85,19 +87,13 @@ export class StatisticsComponent implements OnInit {
    }
 
   getData() {
+    let dataFake = []
 
-    let dataFake = [{ machine: '3344 (BB-CL-34)', time: `1:00:42`, route: 'Portillo - Estadio San Carlo' }]
     for (let index = 1; index < 11; index++) {
       dataFake.push({ machine: '3344 (BB-CL-34)', time: `${index}:00:42`, route: 'Portillo - Estadio San Carlo'})
     }
 
-    this.dataSource = new MatTableDataSource(dataFake);
-
-    setTimeout(() => {
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
-    }, 500);
-
+    this.buses = dataFake
   }
 
   async filterData(date:'today'|'this_week'|'this_month'){
@@ -151,12 +147,8 @@ export class StatisticsComponent implements OnInit {
     params.startTime = (params.startTime.indexOf(':59')> 0) ? params.startTime : params.startTime + ':59'
     params.endTime =  (params.endTime.indexOf(':59')> 0) ? params.endTime : params.endTime + ':59'
 
-    /* console.log(params) */
-
     const start_date = params.start_date+' '+params.startTime
     const end_date = params.end_date+' '+params.endTime
-
-    console.log(start_date, end_date)
 
     Promise.all([this.charts.getTotalPassengersByRangeDate(start_date,end_date).toPromise(),
       this.charts.getAveragePassengersByDayByRange(start_date,end_date).toPromise(),
@@ -218,38 +210,8 @@ export class StatisticsComponent implements OnInit {
 
         PDF.save('estadisticas.pdf');
     });
-    //Para exportar a PDF las graficas
 
-    //Exporta a Excel
-    const props:any = {
-      'time':'Hora de Salida',
-      'machine':'Nro. Máquina / Patente',
-      'route':'Ruta',
-    }
-
-    const dataForXLSX = this.dataSource.data.map((itemObject)=>{
-
-      let object:any = {}
-      for (const property in itemObject) {
-
-        if (props.hasOwnProperty(property)) {
-
-          object[props[property]] = itemObject[property]
-
-        } else {
-          object[property] = itemObject[property]
-
-        }
-      }
-
-      return object
-    })
-   /*  console.log(dataForXLSX); */
-
-    const workSheet = XLSX.utils.json_to_sheet(dataForXLSX, { header: ['Hora de Salida','Nro. Máquina / Patente','Ruta'] })
-    const workBook: XLSX.WorkBook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workBook, workSheet, 'Maquinas');
-    XLSX.writeFile(workBook, 'report.xlsx');
+    this.exportXLSX()
     this.resService.closeLoader()
   }
 
@@ -258,5 +220,4 @@ export class StatisticsComponent implements OnInit {
       this.dataChartsSub.unsubscribe()
     }
   }
-
 }
