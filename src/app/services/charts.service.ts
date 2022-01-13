@@ -291,21 +291,18 @@ export class ChartsService {
  */
     if (date) { // para obtener total pasajeros por dia de la semana o mes
       await this.getTotalPassengersByDay(date,'enter').toPromise().then((resp)=>{
-        console.log('Subida',resp)
         dataX = resp.map((i:any)=>i.date)
         dataY = resp.map((i:any)=>i.enters)
       })
 
     } else if(start_date && end_date){ // para obtener total pasajeros por rango de fecha
       await this.getTotalPassengersByDayByRange(start_date, end_date,'enter').toPromise().then((resp)=>{
-        console.log('Subida',resp)
         dataX = resp.map((i:any)=>i.date)
         dataY = resp.map((i:any)=>i.enters)
       })
     }
     else { //total pasajeros por hora de hoy
       await this.getTotalPassengersByTimeToday('enter').toPromise().then((resp)=>{
-        console.log('Subida',resp)
         dataX = resp.map((i:any)=>i.hour+':00')
         dataY = resp.map((i:any)=>i.pasajeros)
       })
@@ -407,27 +404,22 @@ export class ChartsService {
 
     if (date) { // para obtener total pasajeros por dia de la semana o mes
       await this.getTotalPassengersByDay(date,'exit').toPromise().then((resp)=>{
-        console.log('Bajada',resp)
         dataX = resp.map((i:any)=>i.date)
         dataY = resp.map((i:any)=>i.enters)
       })
 
     } else if(start_date && end_date){ // para obtener total pasajeros por rango de fecha
       await this.getTotalPassengersByDayByRange(start_date, end_date,'exit').toPromise().then((resp)=>{
-        console.log('Bajada',resp)
         dataX = resp.map((i:any)=>i.date)
         dataY = resp.map((i:any)=>i.enters)
       })
     }
     else { //total pasajeros por hora de hoy
       await this.getTotalPassengersByTimeToday('exit').toPromise().then((resp)=>{
-        console.log('Bajada',resp)
         dataX = resp.map((i:any)=>i.hour+':00')
         dataY = resp.map((i:any)=>i.pasajeros)
       })
-
     }
-
 
     const options: EChartsOption = {
       xAxis: {
@@ -493,9 +485,9 @@ export class ChartsService {
 
   //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
   getTotalPassengers(date:'today'|'this_week'|'this_month') {
-    
+
     const endpoint = `${this.contadorApiUrl}/total_passengers`;
-    
+
     let obj:any = {}
 
     obj['date'] = date
@@ -508,9 +500,9 @@ export class ChartsService {
   }
 
   getTotalPassengersByRangeDate(start_date: string, end_date: string) {
-    
+
     const endpoint = `${this.contadorApiUrl}/total_passengers`;
-    
+
     let obj:any= {}
 
     obj['start_date'] = start_date
@@ -526,7 +518,7 @@ export class ChartsService {
 //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
 
   getTotalPassengersByTimeToday(event_type?:'enter'|'exit') {//Este da como resultado un array por horas
-    
+
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
 
     let obj:any= {}
@@ -542,9 +534,9 @@ export class ChartsService {
   }
 
   getTotalPassengersByDay(date:'today'|'this_week'|'this_month',event_type?:'enter'|'exit') {
-    
+
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
-    
+
     let obj:any= {}
 
     obj['date'] = date
@@ -558,7 +550,7 @@ export class ChartsService {
   }
 
   getTotalPassengersByDayByRange(start_date:string,end_date:string,event_type?:'enter'|'exit') {
-    
+
     const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
 
     let obj:any= {}
@@ -578,9 +570,9 @@ export class ChartsService {
   /* Para obtener Promedio de Pasajeros */
 
   getAveragePassengersByTimeToday() {
-    
+
     const endpoint = `${this.contadorApiUrl}/avg_passengers`;
-    
+
     let obj:any= {}
 
     obj['date'] ='today'
@@ -593,9 +585,9 @@ export class ChartsService {
   }
 
   getAveragePassengersByDay(date:'today'|'this_week'|'this_month') {
-    
+
     const endpoint = `${this.contadorApiUrl}/avg_passengers`;
-    
+
     let obj:any= {}
 
     obj['date'] = date
@@ -608,9 +600,9 @@ export class ChartsService {
   }
 
   getAveragePassengersByDayByRange(start_date:string,end_date:string) {
-    
+
     const endpoint = `${this.contadorApiUrl}/avg_passengers`;
-    
+
     let obj:any= {}
 
     obj['start_date'] = start_date
@@ -627,7 +619,7 @@ export class ChartsService {
   /* Obtener Buses activos  */
 
   getTotalActiveMachinesToday() {//Este da como resultado un array  de buses activo por placa
-    
+
     const endpoint = `${this.contadorApiUrl}/active_vehicles`;
     let params = new HttpParams().set('date', 'today')
 
