@@ -1,8 +1,9 @@
-import { Component, Input, OnInit, Output, ViewChild, EventEmitter } from '@angular/core'
+import { Component, Input, OnInit, Output, ViewChild, EventEmitter, SimpleChange } from '@angular/core'
 import { MatTableDataSource } from '@angular/material/table'
 import { MatPaginator } from '@angular/material/paginator'
 import { MatSort } from '@angular/material/sort'
 import * as XLSX from 'xlsx'
+import * as moment from 'moment'
 
 @Component({
   selector: 'app-table-general',
@@ -16,7 +17,7 @@ export class TableGeneralComponent implements OnInit {
   @Output() eventExportXLSX: EventEmitter<Function> = new EventEmitter()
 
   public displayedColumns: string[] = []
-  public dataSource!: MatTableDataSource<any>
+  public dataSource!: MatTableDataSource<any[]>
   public tableOptions: TTableOptions = {
     sortDirection: 'desc',
     pageSize: 10
@@ -28,6 +29,7 @@ export class TableGeneralComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    moment.locale('es')
     this.dataSource = new MatTableDataSource(this.items)
     this.displayedColumns = this.fields.map(field => field.key)
 
@@ -39,7 +41,16 @@ export class TableGeneralComponent implements OnInit {
     this.eventExportXLSX.emit(this.exportXLSX(this.fields))
   }
 
-  // TODO: mejorar este metodo para adecuar tamaños de columnas dinamicamente en el excel
+  ngOnChanges(changes: TChanges<any[]>): void {
+    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
+    //Add '${implements OnChanges}' to the class.
+
+    // TODO: create loading para mostrar mientras los datos llegan
+
+    // FIXME: corregir error "TypeError: Cannot set properties of undefined (setting 'data')"
+    this.dataSource.data = changes.items.currentValue
+  }
+
   private exportXLSX(fields: TTableField[]): Function {
     let props: any = {}
 
@@ -64,17 +75,14 @@ export class TableGeneralComponent implements OnInit {
       header: fields.map(field => field.label)
     })
 
-    let wscols = [
-      {wch:12},
-      {wch:20},
-      {wch:25}
-    ];
-  
-    workSheet['!cols'] = wscols;
+    // TODO: traer estos datos dinamicamente desde fields
+    let wscols = [{ wch: 12 }, { wch: 20 }, { wch: 25 }]
+
+    workSheet['!cols'] = wscols
 
     const workBook: XLSX.WorkBook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workBook, workSheet, 'Maquinas')
+    XLSX.utils.book_append_sheet(workBook, workSheet, 'Sheet1')
 
-    return () => XLSX.writeFile(workBook, 'report.xlsx')
+    return () => XLSX.writeFile(workBook, `Reporte de ${this.name} - ${moment().format('DD MMMM YYYY HH.mm')}.xlsx`)
   }
 }

@@ -15,48 +15,19 @@
         <p class='text-black mb-0'> Cant. de pasajeros: 1.125</p>
     </div>
 
-    <button type="button" class="btn btn-main px-4 py-0 d-flex align-items-center" style="height: 35px;" 
-    (click)="exportData()">
-        <p class="mb-0 text-white me-2" style="font-size: 18px;"><strong>Descargar reporte</strong> </p>
+    <button type="button" class="btn btn-main px-4 py-0 d-flex align-items-center" style="height: 35px;"
+    (click)="exportXLSX()">
+        <p class="mb-0 text-white me-2" style="font-size: 18px;"><strong>Descargar reporte</strong></p>
         <img src="assets/images/download.svg" alt="" srcset="">
 
     </button>
 
 </div>
 
-<div class="" *ngIf="dataSource">
-    <table mat-table matSort [dataSource]="dataSource" class=" w-100">
-
-
-        <ng-container matColumnDef="date">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header style=" border-radius: 15px 0px 0px 15px!important"><strong>Fecha</strong> </th>
-            <td mat-cell *matCellDef="let element"> {{element.date}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="time">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header><strong>Hora</strong> </th>
-            <td mat-cell *matCellDef="let element"> {{element.time}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="route">
-            <th mat-header-cell *matHeaderCellDef><strong>Ruta</strong> </th>
-            <td mat-cell *matCellDef="let element"> {{element.route}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="bus_stop">
-            <th mat-header-cell *matHeaderCellDef><strong>Paradero</strong> </th>
-            <td mat-cell *matCellDef="let element"> {{element.bus_stop}} </td>
-        </ng-container>
-
-        <ng-container matColumnDef="passengers" >
-            <th mat-header-cell *matHeaderCellDef mat-sort-header style="border-radius: 0px 15px 15px 0px!important"><strong>Cant. de pasajeros</strong> </th>
-            <td mat-cell *matCellDef="let element"> {{element.passengers}} </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-
-    <mat-paginator showFirstLastButtons [pageSize]="10" [length]="dataSource.data.length" class="">
-    </mat-paginator>
-</div>
+<app-table-general
+    *ngIf="geoZones"
+    [name]="'Bus'"
+    [fields]="busFields"
+    [items]="geoZones"
+    (eventExportXLSX)="exportXLSX = $event"
+></app-table-general>
