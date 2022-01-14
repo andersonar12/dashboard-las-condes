@@ -2,7 +2,6 @@ import { Component, Input, OnInit, Output, ViewChild, EventEmitter } from '@angu
 import { MatTableDataSource } from '@angular/material/table'
 import { MatPaginator } from '@angular/material/paginator'
 import { MatSort } from '@angular/material/sort'
-
 import * as XLSX from 'xlsx'
 
 @Component({
@@ -64,6 +63,14 @@ export class TableGeneralComponent implements OnInit {
     const workSheet = XLSX.utils.json_to_sheet(dataForXLSX, {
       header: fields.map(field => field.label)
     })
+
+    let wscols = [
+      {wch:12},
+      {wch:20},
+      {wch:25}
+    ];
+  
+    workSheet['!cols'] = wscols;
 
     const workBook: XLSX.WorkBook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(workBook, workSheet, 'Maquinas')

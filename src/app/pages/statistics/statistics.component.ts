@@ -8,6 +8,7 @@ import { MachineGPS, TotalPasajeros, PromedioPasajeros } from '../../interfaces/
 import * as moment from 'moment';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { EChartsOption } from 'echarts';
 
 @Component({
   selector: 'app-statistics',
@@ -22,8 +23,8 @@ export class StatisticsComponent implements OnInit {
   public totalMachines!:number |string
   //////// Graficas
   public dataChartsSub!:Subscription
-  public optionChart1!:any
-  public optionChart2!:any
+  public optionChart1!:EChartsOption
+  public optionChart2!:EChartsOption
 
   public machines!:MachineGPS[]
   public machinePicked!:string  | undefined

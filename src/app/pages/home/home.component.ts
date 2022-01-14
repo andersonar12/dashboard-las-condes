@@ -17,7 +17,6 @@ declare var Pushbar: any
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
-  @ViewChild('aside') aside!: ElementRef
 
   public pushbar:any
   public machines!:MachineGPS[]
@@ -29,9 +28,9 @@ export class HomeComponent implements OnInit {
   public lng= -70.56714105961915//Para centralizar el mapa en Las Condes
   public latClickMap!:number
   public lngClickMap!:number
-  public optionChart1!:any
-  public optionChart2!:any
-  public optionChart3!:any
+  public optionChart1!:EChartsOption
+  public optionChart2!:EChartsOption
+  public optionChart3!:EChartsOption
   public minDate = new Date()
   public rangeDatePicker = new FormGroup({
     start:    new FormControl('',[Validators.required]),
@@ -74,7 +73,7 @@ export class HomeComponent implements OnInit {
           if (machineFind)  machine['current_passengers'] = machineFind
           // asociamos la cantidad de pasajeros en vuelta actual a cada bus
 
-          // Aqui en este .map() asignamos los colores de los marcadores a cada bus <--
+          // Aqui asignamos los colores de los marcadores a cada bus <--
           if (index >= this.markers.length){
             index = 0
             machine.marker = this.markers[index]
@@ -83,7 +82,7 @@ export class HomeComponent implements OnInit {
           }
           index++
 
-          return machine // --> Aqui en este .map() asignamos los colores de los marcadores a cada bus
+          return machine // --> Aqui asignamos los colores de los marcadores a cada bus
         })
 
         this.resService.closeLoader()
@@ -117,12 +116,9 @@ export class HomeComponent implements OnInit {
   centerBus(plate:string) {
 
     const findBus = this.machines.findIndex(bus => bus.plate == plate);
-
-    /* let busSearched =  this.buses[findBus] */
-
     if (findBus >= 0) {
       if (this.map) {
-        this.map.setCenter({ lat: this.machines[findBus].lpf.lat, lng: this.machines[findBus].lpf.lng });
+        this.map.setCenter({ lat: this.machines[findBus].lpf.lat, lng: this.machines[findBus].lpf.lng })
         this.map.setZoom(22)
       }
     }
@@ -164,10 +160,6 @@ export class HomeComponent implements OnInit {
 
   hoverFilters(personalizado:HTMLElement){
     personalizado.classList.add('hover-filters')
-  }
-
-  slideToggle(event:any){
-    console.log(event.checked)
   }
 
   showBusStops(){

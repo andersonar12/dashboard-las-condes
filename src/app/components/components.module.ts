@@ -6,19 +6,23 @@ import {MatIconModule} from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { NgxEchartsModule } from 'ngx-echarts';
+import * as echarts from 'echarts';
 
 import { TableGeneralComponent } from './table-general/table-general.component';
+import { SidebarRightComponent } from './sidebar-right/sidebar-right.component';
 
 @NgModule({
-  declarations: [MachineModalComponent, TableGeneralComponent],
+  declarations: [MachineModalComponent, TableGeneralComponent, SidebarRightComponent],
   imports: [
     CommonModule,
     MatDialogModule,
     MatIconModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    NgxEchartsModule.forRoot({ echarts })
   ],
-  exports: [ TableGeneralComponent ]
+  exports: [ TableGeneralComponent,SidebarRightComponent ]
 })
 export class ComponentsModule { }
