@@ -1,33 +1,34 @@
 <div class="d-flex justify-content-between w-100">
-    <div class="d-flex  align-items-center">
-        <img src="assets/images/markers/Grupo 1597.png" class="">
-        <h1 class="text-black">Máquina: 3344</h1>
-    </div>
-    <mat-icon aria-hidden="false" (click)="dialogRef.close()" class="text-black" style="font-size: 27px;">cancel
-    </mat-icon>
+  <div class="d-flex align-items-center">
+    <img src="assets/images/markers/Grupo 1597.png" />
+    <h1 class="text-black">Máquina: {{ data.machine.name }}</h1>
+  </div>
 
+  <mat-icon aria-hidden="false" class="text-black" style="font-size: 27px" (click)="dialogRef.close()">
+    cancel
+  </mat-icon>
 </div>
 
 <div class="d-flex justify-content-between w-100 mb-4">
+  <div class="d-flex align-items-center">
+    <p class="text-black me-4 mb-0">Patente: {{ data.machine.plate }}</p>
+    <p class="text-black mb-0">Cant. de pasajeros: {{ passengers }}</p>
+  </div>
 
-    <div class="d-flex align-items-center">
-        <p class="text-black me-4 mb-0">Patente: BB-CL-34</p>
-        <p class='text-black mb-0'> Cant. de pasajeros: 1.125</p>
-    </div>
-
-    <button type="button" class="btn btn-main px-4 py-0 d-flex align-items-center" style="height: 35px;"
-    (click)="exportXLSX()">
-        <p class="mb-0 text-white me-2" style="font-size: 18px;"><strong>Descargar reporte</strong></p>
-        <img src="assets/images/download.svg" alt="" srcset="">
-
-    </button>
-
+  <button
+    type="button"
+    class="btn btn-main px-4 py-0 d-flex align-items-center"
+    style="height: 35px"
+    (click)="exportXLSX()"
+  >
+    <p class="mb-0 text-white me-2" style="font-size: 18px"><strong>Descargar reporte</strong></p>
+    <img src="assets/images/download.svg" alt="Icono de descarga" />
+  </button>
 </div>
 
 <app-table-general
-    *ngIf="geoZones"
-    [name]="'Bus'"
-    [fields]="busFields"
-    [items]="geoZones"
-    (eventExportXLSX)="exportXLSX = $event"
+  name="Geo Zonas"
+  [fields]="busFields"
+  [items]="geoZones"
+  (eventExportXLSX)="exportXLSX = $event"
 ></app-table-general>

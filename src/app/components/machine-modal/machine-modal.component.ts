@@ -1,8 +1,7 @@
-import { Component, OnInit, Inject, ViewChild } from '@angular/core'
+import { Component, OnInit, Inject } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
-import { MatPaginator } from '@angular/material/paginator'
-import { MatSort } from '@angular/material/sort'
-import { MatTableDataSource } from '@angular/material/table'
+
+import * as moment from 'moment'
 
 import { GeoZonesService } from '@SERVICES/geo-zones.service'
 
@@ -12,14 +11,10 @@ import { GeoZonesService } from '@SERVICES/geo-zones.service'
   styleUrls: ['./machine-modal.component.scss']
 })
 export class MachineModalComponent implements OnInit {
-  public displayedColumns: string[] = ['date', 'time', 'route', 'bus_stop', 'passengers']
-  public dataSource!: MatTableDataSource<any>
-
-  @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator
-  @ViewChild(MatSort, { static: false }) sort!: MatSort
+  public passengers: number = 0
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: TMachineModalData,
     public dialogRef: MatDialogRef<MachineModalComponent>,
     private geoZonesService: GeoZonesService
   ) {}
@@ -54,21 +49,27 @@ export class MachineModalComponent implements OnInit {
   }
 
   async getData() {
-    const dataList = await this.geoZonesService.getReportBuses({} as TBodyAforo['busReport'])
+    const body: TBodyAforo['busReport'] = {
+      plate: this.data.machine.plate,
+      date: moment().format('YYYY-MM-DD')
+    }
 
-    const geoZones = dataList!.map(data => {
-      const date = data.date as string
+    const busReportList = await this.geoZonesService.getBusReport(body)
 
-      return {
-        ...data,
-        date: date.substring(0, date.search('T')),
-        time: date.substring(11, date.search(/\./)),
+    const geoZones = busReportList?.map(busReport => {
+      const { date, geozone, pasajeros } = busReport
+
+      this.passengers += this.passengers + pasajeros
+
+      return <TGeoZone>{
+        date: moment(date).format('YY-MM-DD'),
+        time: moment(date).format('HH:mm:ss'),
         route: '',
-        geozone: data.geozone,
-        pasajeros: data.pasajeros.toString()
+        geozone,
+        pasajeros: pasajeros.toString()
       }
     })
 
-    this.geoZones = geoZones
+    this.geoZones = geoZones || []
   }
 }

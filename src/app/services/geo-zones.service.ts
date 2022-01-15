@@ -9,16 +9,13 @@ import { environment } from '@ENV'
 export class GeoZonesService {
   constructor(private http: HttpClient) {}
 
-  public async getReportBuses({ plate, date }: TBodyAforo['busReport']): Promise<TResponseAforo['busReport'] | null> {
+  public async getBusReport({ plate, date }: TBodyAforo['busReport']): Promise<TResponseAforo['busReport'] | null> {
     const endpoint = environment.contadorApiUrl + '/api'
 
     try {
       const data = await this.http
         .get<TResponseAforo['busReport']>(`${endpoint}/bus_report`, {
-          params: {
-            plate: 'LGJW-26',
-            date: '2022-01-04'
-          }
+          params: { plate, date }
         })
         .toPromise()
 

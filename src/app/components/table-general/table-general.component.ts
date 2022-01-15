@@ -1,27 +1,29 @@
-import { Component, Input, OnInit, Output, ViewChild, EventEmitter, SimpleChange } from '@angular/core'
+import { Component, Input, OnInit, OnChanges, Output, ViewChild, EventEmitter } from '@angular/core'
 import { MatTableDataSource } from '@angular/material/table'
 import { MatPaginator } from '@angular/material/paginator'
 import { MatSort } from '@angular/material/sort'
-import * as XLSX from 'xlsx'
+
 import * as moment from 'moment'
+import * as XLSX from 'xlsx'
 
 @Component({
   selector: 'app-table-general',
   templateUrl: './table-general.component.html',
   styleUrls: ['./table-general.component.scss']
 })
-export class TableGeneralComponent implements OnInit {
+export class TableGeneralComponent implements OnInit, OnChanges {
   @Input() name: string = ''
   @Input() fields: TTableField[] = []
-  @Input() items: any[] = [] // TODO: crear tipo de dato
+  @Input() items: object[] = []
   @Output() eventExportXLSX: EventEmitter<Function> = new EventEmitter()
 
   public displayedColumns: string[] = []
-  public dataSource!: MatTableDataSource<any[]>
+  public dataSource = new MatTableDataSource<TGeoZone>()
   public tableOptions: TTableOptions = {
     sortDirection: 'desc',
     pageSize: 10
   }
+  public isLoading: boolean = true
 
   @ViewChild(MatPaginator, { static: false }) paginator!: MatPaginator
   @ViewChild(MatSort, { static: false }) sort!: MatSort
@@ -30,7 +32,6 @@ export class TableGeneralComponent implements OnInit {
 
   ngOnInit(): void {
     moment.locale('es')
-    this.dataSource = new MatTableDataSource(this.items)
     this.displayedColumns = this.fields.map(field => field.key)
 
     setTimeout(() => {
@@ -41,14 +42,13 @@ export class TableGeneralComponent implements OnInit {
     this.eventExportXLSX.emit(this.exportXLSX(this.fields))
   }
 
-  ngOnChanges(changes: TChanges<any[]>): void {
-    //Called before any other lifecycle hook. Use it to inject dependencies, but avoid any serious work here.
-    //Add '${implements OnChanges}' to the class.
+  ngOnChanges(changes: TTableChanges<TGeoZone[]>): void {
+    const { previousValue, currentValue } = changes.items
 
-    // TODO: create loading para mostrar mientras los datos llegan
-
-    // FIXME: corregir error "TypeError: Cannot set properties of undefined (setting 'data')"
-    this.dataSource.data = changes.items.currentValue
+    if (previousValue) {
+      this.dataSource.data = currentValue
+      this.isLoading = false
+    }
   }
 
   private exportXLSX(fields: TTableField[]): Function {
@@ -58,7 +58,7 @@ export class TableGeneralComponent implements OnInit {
       props[field.key] = field.label
     })
 
-    const dataForXLSX = this.dataSource.data.map(itemObject => {
+    const dataForXLSX = this.dataSource.data.map((itemObject: any) => {
       let object: any = {}
       for (const property in itemObject) {
         if (props.hasOwnProperty(property)) {

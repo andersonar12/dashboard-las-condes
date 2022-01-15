@@ -1,16 +1,19 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MachineModalComponent } from './machine-modal/machine-modal.component';
-import {MatIconModule} from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSortModule } from '@angular/material/sort';
-import { NgxEchartsModule } from 'ngx-echarts';
-import * as echarts from 'echarts';
+import { NgModule } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatIconModule } from '@angular/material/icon'
+import { MatTableModule } from '@angular/material/table'
+import { MatPaginatorModule } from '@angular/material/paginator'
+import { MatSortModule } from '@angular/material/sort'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
 
-import { TableGeneralComponent } from './table-general/table-general.component';
-import { SidebarRightComponent } from './sidebar-right/sidebar-right.component';
+import { NgxEchartsModule } from 'ngx-echarts'
+import * as echarts from 'echarts'
+
+// COMPONENTS
+import { MachineModalComponent } from './machine-modal/machine-modal.component'
+import { TableGeneralComponent } from './table-general/table-general.component'
+import { SidebarRightComponent } from './sidebar-right/sidebar-right.component'
 
 @NgModule({
   declarations: [MachineModalComponent, TableGeneralComponent, SidebarRightComponent],
@@ -21,8 +24,9 @@ import { SidebarRightComponent } from './sidebar-right/sidebar-right.component';
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    MatProgressBarModule,
     NgxEchartsModule.forRoot({ echarts })
   ],
-  exports: [ TableGeneralComponent,SidebarRightComponent ]
+  exports: [TableGeneralComponent, SidebarRightComponent]
 })
-export class ComponentsModule { }
+export class ComponentsModule {}

@@ -1,11 +1,10 @@
-import { Component, OnInit, Input, EventEmitter, Output, ViewChild, ElementRef } from '@angular/core';
-import { MachineGPS } from '../../interfaces/interfaces';
-import { MachineModalComponent } from '../machine-modal/machine-modal.component';
-import { MatDialog } from '@angular/material/dialog';
-import { ChartsService } from '../../services/charts.service';
-import { EChartsOption } from 'echarts';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core'
+import { MatDialog } from '@angular/material/dialog'
+import { EChartsOption } from 'echarts'
 
-declare var Pushbar: any
+import { MachineGPS } from '../../interfaces/interfaces'
+import { ChartsService } from '../../services/charts.service'
+import { MachineModalComponent } from '../machine-modal/machine-modal.component'
 
 @Component({
   selector: 'app-sidebar-right',
@@ -13,33 +12,31 @@ declare var Pushbar: any
   styleUrls: ['./sidebar-right.component.scss']
 })
 export class SidebarRightComponent implements OnInit {
-  
   /* @ViewChild('aside') aside!: ElementRef */
-  @Input() machines:MachineGPS[] = []
-  @Input() optionChart!:EChartsOption
+  @Input() machines: MachineGPS[] = []
+  @Input() optionChart!: EChartsOption
   @Output() plateBusEmit: EventEmitter<string> = new EventEmitter()
 
   public showToogle = false
   public showMachineList = true
-  public pushbar:any
+  public pushbar: any
 
-  constructor(public charts:ChartsService, public dialog: MatDialog) { }
+  constructor(public charts: ChartsService, public dialog: MatDialog) {}
 
   ngOnInit(): void {
-    this.pushbar = new Pushbar({ blur: false, overlay: false });
+    this.pushbar = new Pushbar({ blur: false, overlay: false })
   }
 
-  openMachineDetailModal(){
+  public openMachineDetailModal(machine: MachineGPS) {
     this.dialog.open(MachineModalComponent, {
       width: '1200px',
+      data: { machine }
       /* disableClose: true, */
     })
   }
-  
+
   //TODO: hay un toggle en el sidebar segun la propuesta grafica, aqui se obtiene boolean al hacer click sobre el
-  slideToggle(event:any){
+  public slideToggle(event: any) {
     console.log(event.checked)
   }
-
-
 }

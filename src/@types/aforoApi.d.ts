@@ -12,11 +12,3 @@ type TResponseAforo = {
     pasajeros: number
   }>
 }
-
-type TGeoZone = {
-  date: string
-  time: string
-  route?: string
-  geozone: string
-  pasajeros: number
-}
