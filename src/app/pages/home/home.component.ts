@@ -95,9 +95,10 @@ export class HomeComponent implements OnInit {
    this.optionChart3 = await this.charts.setOptionsChartsAverageRise()
   }
 
-  openMachineDetailModal(){
+  openMachineDetailModal(machine: MachineGPS){
     this.dialog.open(MachineModalComponent, {
       width: '1200px',
+      data: { machine }
       /* disableClose: true, */
     })
   }

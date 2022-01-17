@@ -1,4 +1,4 @@
- 
+
 <div class="accordion statistics me-4" id="accordionExample">
     <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
@@ -156,7 +156,7 @@
             <p class="pb-0 mb-0 fs-6"><strong>Pasajeros:</strong>1.125</p>
         </agm-info-window>
     </agm-marker> -->
-    <agm-marker [latitude]="machine.lpf.lat" [longitude]="machine.lpf.lng" [iconUrl]="'assets/images/Grupo '+machine.marker+'.png'" *ngFor="let machine of machines"> <!-- (mouseOver)="onMouseOver(infoWindow,gm)" -->
+    <agm-marker *ngFor="let machine of machines" [latitude]="machine.lpf.lat" [longitude]="machine.lpf.lng" [iconUrl]="'assets/images/Grupo '+machine.marker+'.png'"> <!-- (mouseOver)="onMouseOver(infoWindow,gm)" -->
         <agm-info-window [disableAutoPan]="false" #infoWindow>
             <p class="pb-0 mb-0 fs-6"><strong>Maquina:</strong>{{machine.name}} ({{machine.plate}})</p>
             <p class="pb-0 mb-0 fs-6 text-decoration-underline"><strong>Pasajeros: </strong></p>
@@ -164,9 +164,9 @@
             <p class="pb-0 mb-0" style="font-size: 16px;">Salida: {{machine.current_passengers?.exits}}  </p>
             <div class="d-flex justify-content-end mb-1">
 
-                <button class="btn btn-primary d-flex align-items-center" (click)="openMachineDetailModal()" type="button"><mat-icon>assignment</mat-icon></button>
+                <button class="btn btn-primary d-flex align-items-center mx-2" (click)="openMachineDetailModal(machine)" type="button"><mat-icon>assignment</mat-icon></button>
             </div>
-            
+
         </agm-info-window>
     </agm-marker>
 
@@ -183,8 +183,8 @@
 
     </agm-marker>
     <!-- Marcadores Paraderos con mas subidas -->
-    <!--  
-   
+    <!--
+
 
     <agm-marker [latitude]="lat" [longitude]="lng" [iconUrl]="{ url: 'assets/images/Grupo 1735.png'}">
         <agm-info-window [disableAutoPan]="true">
