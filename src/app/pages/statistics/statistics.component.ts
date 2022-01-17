@@ -182,7 +182,6 @@ export class StatisticsComponent implements OnInit {
 
 
   datePicker(){
-    /* console.log(this.rangeDatePicker.value) */
   }
 
   hoverFilters(personalizado:HTMLElement){

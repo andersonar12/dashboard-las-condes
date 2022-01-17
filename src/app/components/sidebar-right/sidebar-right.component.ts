@@ -35,8 +35,7 @@ export class SidebarRightComponent implements OnInit {
     })
   }
 
-  //TODO: hay un toggle en el sidebar segun la propuesta grafica, aqui se obtiene boolean al hacer click sobre el
   public slideToggle(event: any) {
-    console.log(event.checked)
+    //TODO: hay un toggle en el sidebar segun la propuesta grafica, aqui se obtiene boolean al hacer click sobre el
   }
 }

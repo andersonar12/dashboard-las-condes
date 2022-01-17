@@ -34,8 +34,6 @@ export class AuthService {
   }
 
   signIn(data: any) {
-    /* console.log(user) */
-
     const endpoint = `${this.apiUrl}/users/sign_in`;
 
     const headers = new HttpHeaders({

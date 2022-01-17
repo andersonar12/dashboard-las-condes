@@ -54,7 +54,6 @@ export class HomeComponent implements OnInit {
     // este metodo es del API de Google Maps te permite consultar direcciones pasandole lat y lng
 
     this.mapService.getAddress(-33.40904396097648, -70.56714105961915).toPromise().then((resp) => {
-      console.log(resp)
       this.latClickMap = -33.40904396097648
       this.lngClickMap = -70.56714105961915
     }, (e) => console.log(e))
@@ -63,8 +62,6 @@ export class HomeComponent implements OnInit {
 
   getDevicesGPS(){
     Promise.all([this.resService.getDevicesGPS().toPromise(),this.mapService.getTotalCurrentPassengers().toPromise()]).then(([{data},res2])=>{
-        console.log('Buses',data)
-        console.log('Pasajeros Vuelta Actual',res2)
         let index = 0
         this.machines = data.map((machine)=>{
 
@@ -151,12 +148,10 @@ export class HomeComponent implements OnInit {
   }
 
   filter(){
-    console.log(this.rangeDatePicker.value)
     document.getElementById('btnAccordion2')?.click()
   }
 
   datePicker(){
-    console.log(this.rangeDatePicker.value)
   }
 
   hoverFilters(personalizado:HTMLElement){
@@ -179,7 +174,6 @@ export class HomeComponent implements OnInit {
 
 /* Evento click en cualquier parte del mapa */
   seeCoords(event:any) {
-    console.log(event)
     this.latClickMap = event.coords.lat
     this.lngClickMap = event.coords.lng
   }

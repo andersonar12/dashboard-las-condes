@@ -28,7 +28,6 @@ export class ChartsService {
 
       /* if (event instanceof NavigationError) {
           // Present error to user
-          console.log(event.error);
       } */
   });
   }
@@ -41,7 +40,6 @@ export class ChartsService {
       .then(([res])=>{
         this.totalPassengersInWeek = res.reduce((prev, current) => prev + current.enters, 0)
         data= res
-        console.log(data)
       })
 
     const options: EChartsOption = {
@@ -116,7 +114,6 @@ export class ChartsService {
 
     await Promise.all([this.getTotalActiveMachinesToday().toPromise(), this.resService.getDevicesGPS().toPromise()])
           .then(([resp,resp2])=>{
-            console.log(resp2)
             let activeBuses = resp // arreglo por placas buses en recorrido o activos
             let busFleet:Array<string> = resp2['data'].map((m)=>m.plate) //arreglo mapeado por placas de flota de buses (estacionados)
 
@@ -134,14 +131,10 @@ export class ChartsService {
 
             this.totalBusesActive = totalBusesActive
             /* this.totalBusesInactive = totalBusesInactive */
-            console.log('Activos:'+ totalBusesActive,'Inactivos:'+ totalBusesInactive)
 
             //calculamos los porcentajes
             let activePercentage = percentageCalculator(totalBusesActive,busFleet.length)
-            let inactivePercentage= percentageCalculator(totalBusesInactive,busFleet.length)
-
-            console.log('Porcentaje activos:'+activePercentage,'Porcentaje inactivos:'+inactivePercentage)
-
+            // let inactivePercentage= percentageCalculator(totalBusesInactive,busFleet.length)
 
             data = {activePercentage,totalBusesActive,totalBusesInactive}
           })

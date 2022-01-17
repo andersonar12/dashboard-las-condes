@@ -17,7 +17,7 @@ export class SigninComponent implements OnInit {
   }
 
   buildForm(){
-   
+
     this.formGroup = this._formBuilder.group({
       email: ['', Validators.required],
       password:['', Validators.required],
@@ -26,30 +26,22 @@ export class SigninComponent implements OnInit {
   }
 
   signIn(){
-
-    console.log(this.formGroup.value)
     this.presentLoader()
 
     localStorage.setItem('token', JSON.stringify({token:'token_de_prueba'}));
 
     Promise.all([this.authService.signInGPS().toPromise()])
     .then(([resp]) => {
-
-      console.log(resp);
       this.router.navigateByUrl('/pages/home')
     }).catch((e) => {
-      console.log(e)
       /* alert(`Error Live GPS, ${e}`); */
       Swal.close();
     });
 
     return
     this.authService.signIn(this.formGroup.value).toPromise().then((resp)=>{
-      
-      console.log(resp);
-    
+      // TODO: crear signIn
     }).catch(async (error)=>{
-      console.log(error);
       const errorMsg = await error.error.error
     })
   }
@@ -67,6 +59,6 @@ export class SigninComponent implements OnInit {
       },
     })
   }
-  
+
 
 }
