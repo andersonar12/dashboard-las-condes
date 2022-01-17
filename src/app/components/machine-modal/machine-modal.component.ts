@@ -21,12 +21,12 @@ export class MachineModalComponent implements OnInit {
 
   public exportXLSX!: Function
   public geoZones: TGeoZone[] = []
-  public busFields: TTableField[] = [
+  public geoZonesFields: TTableField[] = [
     { key: 'date', label: 'Fecha', wch: 10 },
     { key: 'time', label: 'Hora', wch: 10 },
     // { key: 'route', label: 'Ruta', wch: 25 },
     { key: 'geozone', label: 'Paradero', wch: 25 },
-    { key: 'pasajeros', label: 'Cant. de pasajeros', wch: 20 }
+    { key: 'passengers', label: 'Cant. de pasajeros', wch: 20 }
   ]
 
   ngOnInit(): void {
@@ -49,9 +49,8 @@ export class MachineModalComponent implements OnInit {
       return <TGeoZone>{
         date: moment(date).format('YY-MM-DD'),
         time: moment(date).format('HH:mm:ss'),
-        route: '',
         geozone,
-        pasajeros: pasajeros.toString()
+        passengers: pasajeros.toString()
       }
     })
 

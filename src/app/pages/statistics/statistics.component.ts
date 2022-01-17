@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { EChartsOption } from 'echarts';
+import { GeoZonesService } from '@SERVICES/geo-zones.service';
 
 @Component({
   selector: 'app-statistics',
@@ -30,18 +31,24 @@ export class StatisticsComponent implements OnInit {
   public machinePicked!:string  | undefined
   public minDate = new Date()
 
-  public exportXLSX!: Function
-  public buses: object[] = []
-  public busesFields: TTableField[] = [
-    { key: 'time', label: 'Hora Salida', wch: 10 },
-    { key: 'machine', label: 'Nro. Máquina / Patente', wch: 20 }
-    // { key: 'route', label: 'Ruta', wch: 25 }
-  ]
+  public exportXLSX: Function[] = Array(2).fill(() => null)
+  public geoZonesEnters: TGeozoneByPassengerFlow[] = []
+  public geoZonesExits: TGeozoneByPassengerFlow[] = []
+  public geoZonesFieldsTemplate = (flow: 'Salida' | 'Entrada'): TTableField[] => ([
+    { key: 'time', label: `Hora ${flow}`, wch: 10 },
+    { key: 'machine', label: 'Nro. Máquina / Patente', wch: 20 },
+    // { key: 'route', label: 'Ruta', wch: 25 },
+    { key: 'geozone', label: 'Paradero', wch: 25 },
+    { key: 'passengers', label: 'Cant. de pasajeros', wch: 20 }
+  ])
+  public geoZonesFieldsEnters = this.geoZonesFieldsTemplate('Entrada')
+  public geoZonesFieldsExits = this.geoZonesFieldsTemplate('Salida')
 
   constructor(
     private cd: ChangeDetectorRef,
     public charts:ChartsService,
-    public resService: LiveGpsService
+    public resService: LiveGpsService,
+    public geoZonesService: GeoZonesService
   ) {}
 
   public rangeDatePicker = new FormGroup({
@@ -82,14 +89,27 @@ export class StatisticsComponent implements OnInit {
 
    }
 
-  getData() {
-    let dataFake = []
+  private async getData() {
+    this.geoZonesEnters = await this.loadFlowByGeoZones('enters')
+    this.geoZonesExits = await this.loadFlowByGeoZones('exits')
+  }
 
-    for (let index = 1; index < 11; index++) {
-      dataFake.push({ machine: '3344 (BB-CL-34)', time: `${index}:00:42`})
-    }
+  private async loadFlowByGeoZones(flow: TBodyAforo['flowByGeoZone']['flow']): Promise<TGeozoneByPassengerFlow[]> {
+    const flowByGeoZone = await this.geoZonesService.getFlowByGeozone({
+      flow,
+      date: moment().format('YYYY-MM-DD')
+    })
 
-    this.buses = dataFake
+    return flowByGeoZone?.map(bus => {
+      const { date, plate, geozone } = bus
+
+      return <TGeozoneByPassengerFlow> {
+        time: moment(date).format('HH:mm:ss'),
+        machine: plate,
+        geozone,
+        passengers: (bus?.entradas_pasajeros || bus?.salidas_pasajeros)!.toString()
+      }
+    }) || []
   }
 
   async filterData(date:'today'|'this_week'|'this_month'){
@@ -206,7 +226,8 @@ export class StatisticsComponent implements OnInit {
         PDF.save('estadisticas.pdf');
     });
 
-    this.exportXLSX()
+    this.exportXLSX[0]()
+    this.exportXLSX[1]()
 
     this.resService.closeLoader()
   }

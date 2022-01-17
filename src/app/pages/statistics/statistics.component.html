@@ -158,27 +158,26 @@
       <div class="row d-flex justify-content-evenly">
           <div class="col-6 p-4" >
             <div class="p-3" style="border: 1px solid #FFB300; border-radius:10px">
-                <p class="mb-1 subtitles text-black"><strong>Listado de buses operativos</strong> </p>
+                <p class="mb-1 subtitles text-black"><strong>Listado de buses operativos (Subidas)</strong> </p>
 
                 <app-table-general
-                    *ngIf="buses.length"
-                    [name]="'Buses operativos 1'"
-                    [fields]="busesFields"
-                    [items]="buses"
-                    (eventExportXLSX)="exportXLSX = $event"
+                    name="Buses Operativos (Subidas)"
+                    [fields]="geoZonesFieldsEnters"
+                    [items]="geoZonesEnters"
+                    (eventExportXLSX)="exportXLSX[0] = $event"
                 ></app-table-general>
             </div>
           </div>
 
           <div class="col-6 p-4" >
             <div class="p-3" style="border: 1px solid #FFB300; border-radius:10px">
-                <p class="mb-1 subtitles text-black"><strong>Listado de buses operativos</strong></p>
+                <p class="mb-1 subtitles text-black"><strong>Listado de buses operativos (Bajadas)</strong></p>
 
                 <app-table-general
-                    *ngIf="buses.length"
-                    [name]="'Buses operativos 2'"
-                    [fields]="busesFields"
-                    [items]="buses"
+                    name="Buses Operativos (Bajadas)"
+                    [fields]="geoZonesFieldsExits"
+                    [items]="geoZonesExits"
+                    (eventExportXLSX)="exportXLSX[1] = $event"
                 ></app-table-general>
             </div>
           </div>

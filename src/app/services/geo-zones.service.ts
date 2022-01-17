@@ -7,22 +7,39 @@ import { environment } from '@ENV'
   providedIn: 'root'
 })
 export class GeoZonesService {
+  private endpoint: string = environment.contadorApiUrl + '/api'
+
   constructor(private http: HttpClient) {}
 
   public async getBusReport({ plate, date }: TBodyAforo['busReport']): Promise<TResponseAforo['busReport'] | null> {
-    const endpoint = environment.contadorApiUrl + '/api'
-
     try {
       const data = await this.http
-        .get<TResponseAforo['busReport']>(`${endpoint}/bus_report`, {
+        .get<TResponseAforo['busReport']>(`${this.endpoint}/bus_report`, {
           params: { plate, date }
         })
         .toPromise()
 
-      if (data) return data
-      else return null
+      return data || null
     } catch (error) {
       console.error('ERROR-GET-REPORT:', error.message)
+      return null
+    }
+  }
+
+  public async getFlowByGeozone({
+    flow,
+    date
+  }: TBodyAforo['flowByGeoZone']): Promise<TResponseAforo['flowByGeoZone'] | null> {
+    try {
+      const data = await this.http
+        .get<TResponseAforo['flowByGeoZone']>(`${this.endpoint}/${flow}_by_geozone`, {
+          params: { date }
+        })
+        .toPromise()
+
+      return data || null
+    } catch (error) {
+      console.error('ERROR-GET-INPUT-BUSES', error.message)
       return null
     }
   }
