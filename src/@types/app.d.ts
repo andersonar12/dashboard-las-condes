@@ -18,6 +18,10 @@ type TTableChanges<T> = import('@angular/core').SimpleChanges & {
   name: string
 }
 
+type TMachineModalData = {
+  machine: import('@ENTITIES/interfaces').MachineGPS
+}
+
 type TGeoZone = {
   date: string
   time: string
@@ -26,7 +30,7 @@ type TGeoZone = {
   passengers: string
 }
 
-type TGeozoneByPassengerFlow = {
+type TGeoZoneByPassengerFlow = {
   time: string
   machine: string
   // route: string
@@ -34,8 +38,10 @@ type TGeozoneByPassengerFlow = {
   passengers: string
 }
 
-type TMachineModalData = {
-  machine: import('@ENTITIES/interfaces').MachineGPS
+type TTopGeoZone = {
+  code: string
+  name: string
+  passengers: string
 }
 
 // DECLARATIONS ________________________________________________________________________________________________________

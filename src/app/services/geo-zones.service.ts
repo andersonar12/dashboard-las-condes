@@ -26,13 +26,13 @@ export class GeoZonesService {
     }
   }
 
-  public async getFlowByGeozone({
+  public async getFlowByGeoZones({
     flow,
     date
-  }: TBodyAforo['flowByGeoZone']): Promise<TResponseAforo['flowByGeoZone'] | null> {
+  }: TBodyAforo['flowByGeoZones']): Promise<TResponseAforo['flowByGeoZones'] | null> {
     try {
       const data = await this.http
-        .get<TResponseAforo['flowByGeoZone']>(`${this.endpoint}/${flow}_by_geozone`, {
+        .get<TResponseAforo['flowByGeoZones']>(`${this.endpoint}/${flow}_by_geozone`, {
           params: { date }
         })
         .toPromise()
@@ -40,6 +40,21 @@ export class GeoZonesService {
       return data || null
     } catch (error) {
       console.error('ERROR-GET-INPUT-BUSES', error.message)
+      return null
+    }
+  }
+
+  public async getTopGeoZones({ date, top }: TBodyAforo['topGeoZones']): Promise<TResponseAforo['topGeoZones'] | null> {
+    try {
+      const data = await this.http
+        .get<TResponseAforo['topGeoZones']>(`${this.endpoint}/top_geozones`, {
+          params: { date, top }
+        })
+        .toPromise()
+
+      return data || null
+    } catch (error) {
+      console.error('ERROR-GET-TOP-GEOZONES', error.message)
       return null
     }
   }

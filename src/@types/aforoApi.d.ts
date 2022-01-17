@@ -4,9 +4,14 @@ type TBodyAforo = {
     date: string
   }
 
-  flowByGeoZone: {
+  flowByGeoZones: {
     flow: 'enters' | 'exits'
     date: string
+  }
+
+  topGeoZones: {
+    date: string
+    top: number
   }
 }
 
@@ -17,11 +22,16 @@ type TResponseAforo = {
     pasajeros: number
   }>
 
-  flowByGeoZone: Array<{
+  flowByGeoZones: Array<{
     date: string
     geozone: string
     plate: string
     entradas_pasajeros?: number
     salidas_pasajeros?: number
+  }>
+
+  topGeoZones: Array<{
+    entradas: number
+    geozone: string
   }>
 }

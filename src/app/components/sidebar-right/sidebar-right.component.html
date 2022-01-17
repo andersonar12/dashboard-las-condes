@@ -22,44 +22,12 @@
                     <img src="assets/images/icon-search.svg" alt="" srcset="">
                 </div>
 
-                <div class="d-flex justify-content-between mb-1">
+                <div *ngFor="let geoZone of topGeoZones" class="d-flex justify-content-between mb-1">
                     <div>
-                        <p class="mb-0" style="font-size: 18px;"> PA719 </p>
-                        <p class="mb-0" style="font-size: 12px;">Hermanos Amunátegui / Esq. San Pablo </p>
+                        <p class="mb-0" style="font-size: 18px;">{{ geoZone.name }}</p>
+                        <p class="mb-0" style="font-size: 12px;">{{ geoZone.code }}</p>
                     </div>
-                    <p class="mb-0" style="font-size: 22px;"><strong>30</strong> </p>
-                </div>
-
-                <div class="d-flex justify-content-between mb-1">
-                    <div>
-                        <p class="mb-0" style="font-size: 18px;"> PA299 </p>
-                        <p class="mb-0" style="font-size: 12px;">Hermanos Amunátegui / Esq. Gral. Mackenna </p>
-                    </div>
-                    <p class="mb-0" style="font-size: 22px;"><strong>30</strong> </p>
-                </div>
-
-                <div class="d-flex justify-content-between mb-1">
-                    <div>
-                        <p class="mb-0" style="font-size: 18px;"> PA719 </p>
-                        <p class="mb-0" style="font-size: 12px;">Hermanos Amunátegui / Esq. San Pablo </p>
-                    </div>
-                    <p class="mb-0" style="font-size: 22px;"><strong>30</strong> </p>
-                </div>
-
-                <div class="d-flex justify-content-between mb-1">
-                    <div>
-                        <p class="mb-0" style="font-size: 18px;"> PA299 </p>
-                        <p class="mb-0" style="font-size: 12px;">Hermanos Amunátegui / Esq. Gral. Mackenna</p>
-                    </div>
-                    <p class="mb-0" style="font-size: 22px;"><strong>30</strong> </p>
-                </div>
-
-                <div class="d-flex justify-content-between mb-1">
-                    <div>
-                        <p class="mb-0" style="font-size: 18px;"> PA299 </p>
-                        <p class="mb-0" style="font-size: 12px;">Hermanos Amunátegui / Esq. Gral. Mackenna</p>
-                    </div>
-                    <p class="mb-0" style="font-size: 22px;"><strong>30</strong> </p>
+                    <p class="mb-0" style="font-size: 22px;"><strong>{{ geoZone.passengers }}</strong> </p>
                 </div>
 
                 <!-- Maquinas -->

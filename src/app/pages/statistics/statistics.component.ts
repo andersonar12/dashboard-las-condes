@@ -32,8 +32,8 @@ export class StatisticsComponent implements OnInit {
   public minDate = new Date()
 
   public exportXLSX: Function[] = Array(2).fill(() => null)
-  public geoZonesEnters: TGeozoneByPassengerFlow[] = []
-  public geoZonesExits: TGeozoneByPassengerFlow[] = []
+  public geoZonesEnters: TGeoZoneByPassengerFlow[] = []
+  public geoZonesExits: TGeoZoneByPassengerFlow[] = []
   public geoZonesFieldsTemplate = (flow: 'Salida' | 'Entrada'): TTableField[] => ([
     { key: 'time', label: `Hora ${flow}`, wch: 10 },
     { key: 'machine', label: 'Nro. Máquina / Patente', wch: 20 },
@@ -94,16 +94,16 @@ export class StatisticsComponent implements OnInit {
     this.geoZonesExits = await this.loadFlowByGeoZones('exits')
   }
 
-  private async loadFlowByGeoZones(flow: TBodyAforo['flowByGeoZone']['flow']): Promise<TGeozoneByPassengerFlow[]> {
-    const flowByGeoZone = await this.geoZonesService.getFlowByGeozone({
+  private async loadFlowByGeoZones(flow: TBodyAforo['flowByGeoZones']['flow']): Promise<TGeoZoneByPassengerFlow[]> {
+    const flowByGeoZones = await this.geoZonesService.getFlowByGeoZones({
       flow,
       date: moment().format('YYYY-MM-DD')
     })
 
-    return flowByGeoZone?.map(bus => {
+    return flowByGeoZones?.map(bus => {
       const { date, plate, geozone } = bus
 
-      return <TGeozoneByPassengerFlow> {
+      return <TGeoZoneByPassengerFlow> {
         time: moment(date).format('HH:mm:ss'),
         machine: plate,
         geozone,
