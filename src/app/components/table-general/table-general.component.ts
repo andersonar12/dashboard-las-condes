@@ -18,7 +18,7 @@ export class TableGeneralComponent implements OnInit, OnChanges {
   @Output() eventExportXLSX: EventEmitter<Function> = new EventEmitter()
 
   public displayedColumns: string[] = []
-  public dataSource = new MatTableDataSource<TGeoZone>()
+  public dataSource = new MatTableDataSource<object>()
   public tableOptions: TTableOptions = {
     sortDirection: 'desc',
     pageSize: 10
@@ -32,6 +32,7 @@ export class TableGeneralComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     moment.locale('es')
+    this.dataSource.data = this.items
     this.displayedColumns = this.fields.map(field => field.key)
 
     setTimeout(() => {
@@ -60,6 +61,7 @@ export class TableGeneralComponent implements OnInit, OnChanges {
 
     const dataForXLSX = this.dataSource.data.map((itemObject: any) => {
       let object: any = {}
+
       for (const property in itemObject) {
         if (props.hasOwnProperty(property)) {
           object[props[property]] = itemObject[property]
@@ -71,14 +73,12 @@ export class TableGeneralComponent implements OnInit, OnChanges {
       return object
     })
 
+    // Establecer el tamaño de todas las columnas iterando "fields"
     const workSheet = XLSX.utils.json_to_sheet(dataForXLSX, {
       header: fields.map(field => field.label)
     })
 
-    // TODO: traer estos datos dinamicamente desde fields
-    let wscols = [{ wch: 12 }, { wch: 20 }, { wch: 25 }]
-
-    workSheet['!cols'] = wscols
+    workSheet['!cols'] = fields.map(field => ({ wch: field.wch }))
 
     const workBook: XLSX.WorkBook = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(workBook, workSheet, 'Sheet1')

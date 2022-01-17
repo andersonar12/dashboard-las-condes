@@ -30,24 +30,19 @@ export class StatisticsComponent implements OnInit {
   public machinePicked!:string  | undefined
   public minDate = new Date()
 
+  public exportXLSX!: Function
   public buses: object[] = []
   public busesFields: TTableField[] = [
-    {
-      label: 'Hora Salida',
-      key: 'time'
-    },
-    {
-      label: 'Nro. Máquina / Patente',
-      key: 'machine'
-    },
-    {
-      label: 'Ruta',
-      key: 'route'
-    }
+    { key: 'time', label: 'Hora Salida', wch: 10 },
+    { key: 'machine', label: 'Nro. Máquina / Patente', wch: 20 }
+    // { key: 'route', label: 'Ruta', wch: 25 }
   ]
-  public exportXLSX!: Function
 
-  constructor(private cd: ChangeDetectorRef, public charts:ChartsService, public resService: LiveGpsService) {}
+  constructor(
+    private cd: ChangeDetectorRef,
+    public charts:ChartsService,
+    public resService: LiveGpsService
+  ) {}
 
   public rangeDatePicker = new FormGroup({
     start_date: new FormControl('',[Validators.required]),
@@ -91,7 +86,7 @@ export class StatisticsComponent implements OnInit {
     let dataFake = []
 
     for (let index = 1; index < 11; index++) {
-      dataFake.push({ machine: '3344 (BB-CL-34)', time: `${index}:00:42`, route: 'Portillo - Estadio San Carlo'})
+      dataFake.push({ machine: '3344 (BB-CL-34)', time: `${index}:00:42`})
     }
 
     this.buses = dataFake
@@ -212,6 +207,7 @@ export class StatisticsComponent implements OnInit {
     });
 
     this.exportXLSX()
+
     this.resService.closeLoader()
   }
 

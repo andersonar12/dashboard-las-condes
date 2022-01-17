@@ -4,8 +4,9 @@ type TTableOptions = {
 }
 
 type TTableField = {
-  label: string
   key: string
+  label: string
+  wch: number
 }
 
 type TTableChanges<T> = import('@angular/core').SimpleChanges & {

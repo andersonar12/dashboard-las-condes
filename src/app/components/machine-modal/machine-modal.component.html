@@ -19,6 +19,7 @@
     type="button"
     class="btn btn-main px-4 py-0 d-flex align-items-center"
     style="height: 35px"
+    [disabled]="!geoZones.length"
     (click)="exportXLSX()"
   >
     <p class="mb-0 text-white me-2" style="font-size: 18px"><strong>Descargar reporte</strong></p>
