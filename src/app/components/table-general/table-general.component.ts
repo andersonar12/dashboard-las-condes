@@ -59,30 +59,34 @@ export class TableGeneralComponent implements OnInit, OnChanges {
       props[field.key] = field.label
     })
 
-    const dataForXLSX = this.dataSource.data.map((itemObject: any) => {
-      let object: any = {}
+    const callback = () => {
+      const dataForXLSX = this.dataSource.data.map((itemObject: any) => {
+        let object: any = {}
 
-      for (const property in itemObject) {
-        if (props.hasOwnProperty(property)) {
-          object[props[property]] = itemObject[property]
-        } else {
-          object[property] = itemObject[property]
+        for (const property in itemObject) {
+          if (props.hasOwnProperty(property)) {
+            object[props[property]] = itemObject[property]
+          } else {
+            object[property] = itemObject[property]
+          }
         }
-      }
 
-      return object
-    })
+        return object
+      })
 
-    // Establecer el tamaño de todas las columnas iterando "fields"
-    const workSheet = XLSX.utils.json_to_sheet(dataForXLSX, {
-      header: fields.map(field => field.label)
-    })
+      // Establecer el tamaño de todas las columnas iterando "fields"
+      const workSheet = XLSX.utils.json_to_sheet(dataForXLSX, {
+        header: fields.map(field => field.label)
+      })
 
-    workSheet['!cols'] = fields.map(field => ({ wch: field.wch }))
+      workSheet['!cols'] = fields.map(field => ({ wch: field.wch }))
 
-    const workBook: XLSX.WorkBook = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(workBook, workSheet, 'Sheet1')
+      const workBook: XLSX.WorkBook = XLSX.utils.book_new()
+      XLSX.utils.book_append_sheet(workBook, workSheet, 'Sheet1')
 
-    return () => XLSX.writeFile(workBook, `Reporte de ${this.name} - ${moment().format('DD MMMM YYYY HH.mm')}.xlsx`)
+      XLSX.writeFile(workBook, `Reporte de ${this.name} - ${moment().format('DD MMMM YYYY HH.mm')}.xlsx`)
+    }
+
+    return callback
   }
 }
