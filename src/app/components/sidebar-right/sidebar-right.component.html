@@ -22,12 +22,12 @@
                     <img src="assets/images/icon-search.svg" alt="" srcset="">
                 </div>
 
-                <div *ngFor="let geoZone of topGeoZones" class="d-flex justify-content-between mb-1">
+                <div *ngFor="let top of topGeoZones" class="d-flex justify-content-between mb-1">
                     <div>
-                        <p class="mb-0" style="font-size: 18px;">{{ geoZone.name }}</p>
-                        <p class="mb-0" style="font-size: 12px;">{{ geoZone.code }}</p>
+                        <p class="mb-0" style="font-size: 18px;">{{ top.geozone | geozone:'code' }}</p>
+                        <p class="mb-0" style="font-size: 12px;">{{ top.geozone | geozone:'name' }}</p>
                     </div>
-                    <p class="mb-0" style="font-size: 22px;"><strong>{{ geoZone.passengers }}</strong> </p>
+                    <p class="mb-0" style="font-size: 22px;"><strong>{{ top.passengers }}</strong> </p>
                 </div>
 
                 <!-- Maquinas -->

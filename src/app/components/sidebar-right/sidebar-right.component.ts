@@ -42,26 +42,12 @@ export class SidebarRightComponent implements OnInit {
       const { geozone, entradas } = geoZone
 
       return <TTopGeoZone>{
-        ...this.descomponentGeoZone(geozone),
+        geozone,
         passengers: entradas.toString()
       }
     })
 
     this.topGeoZones = topGeoZones || []
-  }
-
-  private descomponentGeoZone(geozone: string): { code: string; name: string } {
-    const strList = geozone.split('-')
-
-    return strList.length === 2
-      ? {
-          code: strList[0].trim(),
-          name: strList[1]
-        }
-      : {
-          code: '',
-          name: strList[0].trim()
-        }
   }
 
   public openMachineDetailModal(machine: MachineGPS) {

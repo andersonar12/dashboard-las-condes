@@ -22,7 +22,8 @@
       "@ENTITIES/*": ["app/interfaces/*"],
       "@SERVICES/*": ["app/services/*"],
       "@COMPONENTS/*": ["app/components/*"],
-      "@PAGES/*": ["app/pages/*"]
+      "@PAGES/*": ["app/pages/*"],
+      "@PIPES/*": ["app/pipes/*"]
     }
   },
   "angularCompilerOptions": {

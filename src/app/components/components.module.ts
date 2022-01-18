@@ -6,7 +6,6 @@ import { MatTableModule } from '@angular/material/table'
 import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatSortModule } from '@angular/material/sort'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
-
 import { NgxEchartsModule } from 'ngx-echarts'
 import * as echarts from 'echarts'
 
@@ -15,8 +14,11 @@ import { MachineModalComponent } from './machine-modal/machine-modal.component'
 import { TableGeneralComponent } from './table-general/table-general.component'
 import { SidebarRightComponent } from './sidebar-right/sidebar-right.component'
 
+// OTHERS
+import { GeozonePipe } from '@PIPES/geozone.pipe'
+
 @NgModule({
-  declarations: [MachineModalComponent, TableGeneralComponent, SidebarRightComponent],
+  declarations: [MachineModalComponent, TableGeneralComponent, SidebarRightComponent, GeozonePipe],
   imports: [
     CommonModule,
     MatDialogModule,

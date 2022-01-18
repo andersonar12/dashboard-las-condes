@@ -22,7 +22,7 @@ type TMachineModalData = {
   machine: import('@ENTITIES/interfaces').MachineGPS
 }
 
-type TGeoZone = {
+type TGeoZoneByBus = {
   date: string
   time: string
   // route: string
@@ -39,9 +39,13 @@ type TGeoZoneByPassengerFlow = {
 }
 
 type TTopGeoZone = {
+  geozone: string
+  passengers: string
+}
+
+type TGeoZone = {
   code: string
   name: string
-  passengers: string
 }
 
 // DECLARATIONS ________________________________________________________________________________________________________

@@ -43,7 +43,7 @@ export class TableGeneralComponent implements OnInit, OnChanges {
     this.eventExportXLSX.emit(this.exportXLSX(this.fields))
   }
 
-  ngOnChanges(changes: TTableChanges<TGeoZone[]>): void {
+  ngOnChanges(changes: TTableChanges<object[]>): void {
     const { previousValue, currentValue } = changes.items
 
     if (previousValue) {

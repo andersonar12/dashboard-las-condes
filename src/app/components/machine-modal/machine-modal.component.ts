@@ -20,7 +20,7 @@ export class MachineModalComponent implements OnInit {
   ) {}
 
   public exportXLSX!: Function
-  public geoZones: TGeoZone[] = []
+  public geoZones: TGeoZoneByBus[] = []
   public geoZonesFields: TTableField[] = [
     { key: 'date', label: 'Fecha', wch: 10 },
     { key: 'time', label: 'Hora', wch: 10 },
@@ -46,7 +46,7 @@ export class MachineModalComponent implements OnInit {
 
       this.passengers += this.passengers + pasajeros
 
-      return <TGeoZone>{
+      return <TGeoZoneByBus>{
         date: moment(date).format('YY-MM-DD'),
         time: moment(date).format('HH:mm:ss'),
         geozone,
