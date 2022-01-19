@@ -1,3 +1,8 @@
+type TResponseError = {
+  error: string
+  status: number
+}
+
 type TTableOptions = {
   sortDirection: import('@angular/material/sort').SortDirection
   pageSize: number
@@ -46,6 +51,22 @@ type TTopGeoZone = {
 type TGeoZone = {
   code: string
   name: string
+}
+
+type TLogin = {
+  email: string
+  password: string
+}
+
+type TSingUp = TLogin & {
+  firstname: string
+  lastname: string
+}
+
+type TUser = {
+  email: string
+  password: string
+  token: string
 }
 
 // DECLARATIONS ________________________________________________________________________________________________________

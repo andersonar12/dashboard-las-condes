@@ -1,16 +1,10 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core'
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  FormControl,
-  ValidatorFn,
-  AbstractControl,
-  ValidationErrors
-} from '@angular/forms'
+import { Component, OnInit } from '@angular/core'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 import { Router } from '@angular/router'
 import Swal from 'sweetalert2'
-import { AuthService } from '../../services/auth.service'
+
+import { AuthService } from '@SERVICES/auth.service'
+
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.component.html',
@@ -18,46 +12,41 @@ import { AuthService } from '../../services/auth.service'
 })
 export class SigninComponent implements OnInit {
   public formGroup!: FormGroup
+
   constructor(private _formBuilder: FormBuilder, private router: Router, public authService: AuthService) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.buildForm()
   }
 
-  buildForm() {
-    this.formGroup = this._formBuilder.group({
-      email: ['', Validators.required],
-      password: ['', Validators.required]
-    })
+  private buildForm(): void {
+    this.formGroup = this._formBuilder.group(
+      {
+        email: ['', [Validators.email, Validators.minLength(6), Validators.maxLength(40)]],
+        password: ['', [Validators.minLength(6), Validators.maxLength(30)]]
+      },
+      {
+        validators: Validators.required
+      }
+    )
   }
 
-  signIn() {
+  public async signIn(): Promise<void> {
     this.presentLoader()
+    const login = this.formGroup.value as TLogin
 
-    localStorage.setItem('token', JSON.stringify({ token: 'token_de_prueba' }))
-
-    Promise.all([this.authService.signInGPS().toPromise()])
-      .then(([resp]) => {
-        this.router.navigateByUrl('/pages/home')
-      })
-      .catch(e => {
-        /* alert(`Error Live GPS, ${e}`); */
-        Swal.close()
-      })
-
-    return
-    this.authService
-      .signIn(this.formGroup.value)
-      .toPromise()
-      .then(resp => {
-        // TODO: crear signIn
-      })
-      .catch(async error => {
-        const errorMsg = await error.error.error
-      })
+    try {
+      await this.authService.signIn(login)
+      this.router.navigateByUrl('/pages/home')
+    } catch (errorMessage) {
+      alert('ERROR: ' + errorMessage)
+      this.formGroup.reset()
+    } finally {
+      Swal.close()
+    }
   }
 
-  presentLoader() {
+  private presentLoader(): void {
     Swal.fire({
       heightAuto: false,
       title: 'Cargando',

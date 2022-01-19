@@ -1,4 +1,12 @@
 type TBodyAforo = {
+  signIn: {
+    user: TLogin
+  }
+
+  signUp: {
+    user: TSingUp
+  }
+
   busReport: {
     plate: string
     date: string
@@ -16,6 +24,19 @@ type TBodyAforo = {
 }
 
 type TResponseAforo = {
+  signIn: {
+    token: string
+  }
+
+  signUp: {
+    data: {
+      email: string
+      firstname: string
+      id: number
+      lastname: string
+    }
+  }
+
   busReport: Array<{
     date: string
     geozone: string

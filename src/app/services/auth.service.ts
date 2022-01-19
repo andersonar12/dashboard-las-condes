@@ -1,78 +1,97 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import { Observable } from 'rxjs'
-import { catchError, map } from 'rxjs/operators'
-import { ResponseAuthLiveGps } from '../interfaces/interfaces'
+import { map } from 'rxjs/operators'
+
+import { ResponseAuthLiveGps } from '@ENTITIES/interfaces'
+import { environment } from '@ENV'
+
+const { contadorApiUrl, liveGpsApiUrl, liveGpsCredential } = environment
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  public apiUrl = ''
+  private headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    Accept: '*/*'
+  })
 
   constructor(private http: HttpClient) {}
 
-  //Este endpoint para iniciar en LiveGPS y obtener el token del mismo
-  signInGPS() {
-    const endpoint = 'https://socketgpsv1.witservices.io/api/gestsol-auth'
-    const credenciales = { username: 'lascondes', password: 'lascondes' }
+  public async signIn(user: TLogin): Promise<void | string> {
+    const endpoint = `${contadorApiUrl}/users/signin`
+    const body: TBodyAforo['signIn'] = { user }
 
-    return this.http.post<ResponseAuthLiveGps>(endpoint, credenciales).pipe(
-      map(key => {
-        if (key.hasOwnProperty('error')) {
-          alert(`Error Live GPS, ${JSON.stringify(key)}`)
-          throw new Error(JSON.stringify(key))
-        } else {
-          localStorage.removeItem('tokenLiveGPS')
-          localStorage.setItem('tokenLiveGPS', JSON.stringify(key))
+    try {
+      // TODO: descomentar esta porcion de codigo cuando se solucione el error 404 desde el backend
+      // const { token } = await this.http
+      //   .post<TResponseAforo['signIn']>(endpoint, body, {
+      //     headers: this.headers,
+      //     withCredentials: true
+      //   })
+      //   .toPromise()
+      // ________________________________________
+      let token = 'OK'
 
-          return key
+      if (token) {
+        localStorage.setItem('user', JSON.stringify(<TUser>{ ...body.user, token }))
+        await this.signInGPS()
+      }
+    } catch (error) {
+      localStorage.removeItem('user')
+      const { status } = error as TResponseError
+      let message = ''
+
+      switch (status) {
+        case 404: {
+          message = 'Usuario no encontrado'
+          break
         }
-      })
-    )
-  }
+        case 401: {
+          message = 'Usuario no autorizado'
+          break
+        }
+      }
 
-  signIn(data: any) {
-    const endpoint = `${this.apiUrl}/users/sign_in`
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Accept: '*/*'
-    })
-
-    const body = {
-      email: data.email,
-      password: data.password
+      throw message
     }
-
-    return this.http.post<any>(endpoint, JSON.stringify(body), {
-      headers: headers,
-      withCredentials: true
-    })
   }
 
-  signUp(data: any) {
-    const endpoint = `${this.apiUrl}/users/sign_up`
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      Accept: '*/*'
-    })
+  private async signInGPS(): Promise<void | Error> {
+    // Este endpoint para iniciar en LiveGPS y obtener el token del mismo
+    const endpoint = `${liveGpsApiUrl}/api/gestsol-auth`
 
-    let body = {}
+    const key = await this.http.post<ResponseAuthLiveGps>(endpoint, liveGpsCredential).toPromise()
 
-    return this.http.post<any>(endpoint, body, {
-      headers: headers,
-      withCredentials: true
-    })
+    if (key.hasOwnProperty('error')) {
+      alert(`Error Live GPS, ${JSON.stringify(key)}`)
+      throw new Error(JSON.stringify(key))
+    } else {
+      localStorage.removeItem('tokenLiveGPS')
+      localStorage.setItem('tokenLiveGPS', JSON.stringify(key))
+    }
   }
 
-  logOut() {
-    const token = localStorage.getItem('token')?.replace('"', '').replace('"', '')
-    const endpoint = `${this.apiUrl}/log_out`
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    })
+  // public async signUp(user: TSingUp): Promise<void | Error> {
+  //   const endpoint = `${liveGpsApiUrl}/users/signup`
+  //   const body: TBodyAforo['signUp'] = { user }
 
-    return this.http.post<any>(endpoint, null, { headers: headers })
+  //   try {
+  //     const { data } = await this.http
+  //       .post<TResponseAforo['signUp']>(endpoint, body, {
+  //         headers: this.headers
+  //       })
+  //       .toPromise()
+
+  //     console.log(data)
+  //   } catch (error) {
+  //     const { status } = error as TResponseError
+  //     // manejar error...
+  //   }
+  // }
+
+  public logOut(): void {
+    localStorage.removeItem('user')
+    localStorage.removeItem('tokenLiveGPS')
   }
 }
