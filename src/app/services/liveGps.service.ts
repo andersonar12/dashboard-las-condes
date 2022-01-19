@@ -10,9 +10,7 @@ export class LiveGpsService {
   constructor(private http: HttpClient) {}
 
   public getDevicesGPS() {
-    return this.http
-      .get<TResponseDevicesGPS>('/sapi/devices')
-      .pipe(retryWhen(err => err.pipe(delay(1500), take(2))))
+    return this.http.get<TResponseDevicesGPS>('/sapi/devices').pipe(retryWhen(err => err.pipe(delay(1500), take(2))))
   }
 
   public presentLoader() {

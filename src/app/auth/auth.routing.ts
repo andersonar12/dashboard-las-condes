@@ -1,16 +1,14 @@
-
-import { Routes } from "@angular/router";
-import { SigninComponent } from "./signin/signin.component";
-
+import { Routes } from '@angular/router'
+import { SigninComponent } from './signin/signin.component'
 
 export const AuthRoutes: Routes = [
   {
-    path: "",
+    path: '',
     children: [
       {
-        path: "signin",
-        component: SigninComponent,
+        path: 'signin',
+        component: SigninComponent
       }
     ]
   }
-];
+]

@@ -1,35 +1,27 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
+import { Injectable } from '@angular/core'
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router'
 
 import Swal from 'sweetalert2'
 
-
 @Injectable()
 export class AuthGuard implements CanActivate {
-
-
-  constructor(private router: Router,) {}
+  constructor(private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-
-    const userToken =  localStorage.getItem('token');
+    const userToken = localStorage.getItem('token')
 
     if (userToken != null) {
-
-
-      return true;
-
+      return true
     } else {
+      this.router.navigate(['/auth/signin'])
 
-      this.router.navigate(['/auth/signin']);
+      Swal.fire({
+        icon: 'warning',
+        title: 'Debes Iniciar Sesión',
+        text: 'Ingresa los datos de usuario para acceder'
+      })
 
-        Swal.fire({
-         icon: 'warning',
-         title: 'Debes Iniciar Sesión',
-         text: 'Ingresa los datos de usuario para acceder' })
-
-      return false;
+      return false
     }
   }
-
 }

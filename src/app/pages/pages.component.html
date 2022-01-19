@@ -1,36 +1,54 @@
 <style>
-    .logout:hover {
-        cursor: pointer;
-    }
+  .logout:hover {
+    cursor: pointer;
+  }
 
-    .navbar-left{
-        position:fixed;
-        z-index: 1;
-    }
+  .navbar-left {
+    position: fixed;
+    z-index: 1;
+  }
 </style>
 
-<div class="h-100 d-flex ">
-
-    <div class="navbar-left d-flex align-content-between flex-wrap h-100" style="width: 4.5rem; background-color: #262626;">
-        <div class="text-center w-100">
-            <img src="assets/images/Grupo 1522.svg"  class="my-4 " width="40px" alt="" srcset="">
-            <img src="assets/images/Componente 6 – 7.svg" routerLink="home" routerLinkActive="nav-active" class="my-3 btn-navbar" width="50px" alt="" srcset="">
-            <img src="assets/images/Componente 18 – 8.svg" routerLink="statistics" routerLinkActive="nav-active"  class="my-3 btn-navbar" width="50px" alt="">
-        </div>
-
-        <div class="text-center w-100"> 
-            <img src="assets/images/log-out.svg" class="my-4 logout" matTooltip="Cerrar Sesión"
-            [matTooltipPosition]="'right'"  alt="" routerLink="/auth/signin" srcset="">
-        </div>
-
+<div class="h-100 d-flex">
+  <div
+    class="navbar-left d-flex align-content-between flex-wrap h-100"
+    style="width: 4.5rem; background-color: #262626"
+  >
+    <div class="text-center w-100">
+      <img src="assets/images/Grupo 1522.svg" class="my-4" width="40px" alt="" srcset="" />
+      <img
+        src="assets/images/Componente 6 – 7.svg"
+        routerLink="home"
+        routerLinkActive="nav-active"
+        class="my-3 btn-navbar"
+        width="50px"
+        alt=""
+        srcset=""
+      />
+      <img
+        src="assets/images/Componente 18 – 8.svg"
+        routerLink="statistics"
+        routerLinkActive="nav-active"
+        class="my-3 btn-navbar"
+        width="50px"
+        alt=""
+      />
     </div>
-    
-    <div class="w-100">
-        <router-outlet></router-outlet>
+
+    <div class="text-center w-100">
+      <img
+        src="assets/images/log-out.svg"
+        class="my-4 logout"
+        matTooltip="Cerrar Sesión"
+        [matTooltipPosition]="'right'"
+        alt=""
+        routerLink="/auth/signin"
+        srcset=""
+      />
     </div>
+  </div>
+
+  <div class="w-100">
+    <router-outlet></router-outlet>
+  </div>
 </div>
-
-
-
-
-

@@ -17,19 +17,17 @@ export class AforoInterceptorService implements HttpInterceptor {
   constructor() {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-  
-    const token = localStorage.getItem('token')!;
-    let request = req;
+    const token = localStorage.getItem('token')!
+    let request = req
     let url = request.url.split('//')[1]
 
     if (token && url.indexOf('contador-personas') >= 0) {
-
       const tokenParse = JSON.parse(token)?.token
       request = req.clone({
         headers: new HttpHeaders({
-          Authorization: `Bearer ${ tokenParse }`
-        }),
-      });
+          Authorization: `Bearer ${tokenParse}`
+        })
+      })
     }
 
     return next.handle(request).pipe(

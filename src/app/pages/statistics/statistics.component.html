@@ -1,185 +1,242 @@
 <div class="header px-5 w-100">
-    <div class="row d-flex justify-content-between">
-        <div class="col-1">
-        </div>
-        <div class="col-lg-7 col-xl-4 d-flex justify-content-center" style="width: 690px;">
-
-            <div class="filters p-2 h-100">
-
-                <p class="text-center text-black mb-1" style="letter-spacing: 4px; font-size: 13px;">FILTRAR POR:</p>
-                <div class="row">
-
-                    <div class="col-7 ">
-                        <div class=" accordion accordion-filters w-100" id="accordionExample2">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingTwo">
-                                    <button class="accordion-button collapsed p-2" id="btnAccordion2" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                                        <p class="text-black mb-0 text-center w-100" style="font-size: 16px;"><strong>Selecciona
-                                                un
-                                                rango:</strong> </p>
-                                    </button>
-                                </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                                    data-bs-parent="#accordionExample2">
-                                    <div class="accordion-body pt-1">
-                                        <p class="fs-6 text-black mb-2 text-center filter-action" (click)="filterData('today')">Hoy</p>
-                                        <p class="fs-6 text-black mb-2 text-center filter-action" (click)="filterData('this_week')">Esta semana</p>
-                                        <p class="fs-6 text-black mb-2 text-center filter-action" (click)="filterData('this_month')">Este mes</p>
-                                        <p class="fs-6 mb-1 text-black text-center" #personalizado>Personalizado</p>
-                                        <form [formGroup]="rangeDatePicker" (mouseover)="hoverFilters(personalizado)"
-                                            (mouseleave)="personalizado.classList.remove('hover-filters')">
-                                            <div class="row">
-                                                <div class="col-6 px-1">
-                                                    <mat-form-field appearance="fill" class="w-100">
-                                                        <mat-label>Fecha:</mat-label>
-                                                        <input matInput [matDatepicker]="picker" [max]="minDate" formControlName="start_date"
-                                                            (dateInput)="datePicker()">
-                                                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                                        <mat-datepicker #picker></mat-datepicker>
-                                                    </mat-form-field>
-                                                    <div class="ngx-timepicker-field-example">
-                                                        <ngx-timepicker-field [format]="24"  [defaultTime]="'12:00'" formControlName="startTime"
-                                                            [controlOnly]="false">
-                                                        </ngx-timepicker-field>
-                                                    </div>
-                                                </div>
-                                                <div class="col-6 px-1">
-                                                    <mat-form-field appearance="fill" class="w-100">
-                                                        <mat-label>Fecha:</mat-label>
-                                                        <input matInput [matDatepicker]="picker2" [max]="minDate" formControlName="end_date"
-                                                            (dateInput)="datePicker()">
-                                                        <mat-datepicker-toggle matSuffix [for]="picker2">
-                                                        </mat-datepicker-toggle>
-                                                        <mat-datepicker #picker2></mat-datepicker>
-                                                    </mat-form-field>
-                                                    <div class="ngx-timepicker-field-example">
-                                                        <ngx-timepicker-field [format]="24"  [defaultTime]="'12:00'" formControlName="endTime"
-                                                            [controlOnly]="false">
-                                                        </ngx-timepicker-field>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="text-center mt-1">
-                                                <button [disabled]="rangeDatePicker.invalid" style="border-radius: 20px;"
-                                                    type="button" (click)="filterByDatePicker()">
-                                                    <p class="mb-0" style="font-size: 15px;" >Filtrar</p>
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+  <div class="row d-flex justify-content-between">
+    <div class="col-1"></div>
+    <div class="col-lg-7 col-xl-4 d-flex justify-content-center" style="width: 690px">
+      <div class="filters p-2 h-100">
+        <p class="text-center text-black mb-1" style="letter-spacing: 4px; font-size: 13px">FILTRAR POR:</p>
+        <div class="row">
+          <div class="col-7">
+            <div class="accordion accordion-filters w-100" id="accordionExample2">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                  <button
+                    class="accordion-button collapsed p-2"
+                    id="btnAccordion2"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseTwo"
+                    aria-expanded="true"
+                    aria-controls="collapseTwo"
+                  >
+                    <p class="text-black mb-0 text-center w-100" style="font-size: 16px">
+                      <strong>Selecciona un rango:</strong>
+                    </p>
+                  </button>
+                </h2>
+                <div
+                  id="collapseTwo"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="headingTwo"
+                  data-bs-parent="#accordionExample2"
+                >
+                  <div class="accordion-body pt-1">
+                    <p class="fs-6 text-black mb-2 text-center filter-action" (click)="filterData('today')">Hoy</p>
+                    <p class="fs-6 text-black mb-2 text-center filter-action" (click)="filterData('this_week')">
+                      Esta semana
+                    </p>
+                    <p class="fs-6 text-black mb-2 text-center filter-action" (click)="filterData('this_month')">
+                      Este mes
+                    </p>
+                    <p class="fs-6 mb-1 text-black text-center" #personalizado>Personalizado</p>
+                    <form
+                      [formGroup]="rangeDatePicker"
+                      (mouseover)="hoverFilters(personalizado)"
+                      (mouseleave)="personalizado.classList.remove('hover-filters')"
+                    >
+                      <div class="row">
+                        <div class="col-6 px-1">
+                          <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Fecha:</mat-label>
+                            <input
+                              matInput
+                              [matDatepicker]="picker"
+                              [max]="minDate"
+                              formControlName="start_date"
+                              (dateInput)="datePicker()"
+                            />
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-datepicker #picker></mat-datepicker>
+                          </mat-form-field>
+                          <div class="ngx-timepicker-field-example">
+                            <ngx-timepicker-field
+                              [format]="24"
+                              [defaultTime]="'12:00'"
+                              formControlName="startTime"
+                              [controlOnly]="false"
+                            >
+                            </ngx-timepicker-field>
+                          </div>
                         </div>
-
-                    </div>
-
-                    <div class="col-5">
-                        <div class="col-6 accordion accordion-filters w-100" id="accordionExample3">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-button collapsed p-2" id="btnAccordion3" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
-                                        <p class="text-black mb-0 text-center w-100" style="font-size: 16px;" ><strong>{{(machinePicked) ? machinePicked : ' Nro. de máquina o Patente'}}</strong> </p>
-                                    </button>
-                                </h2>
-                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                                    data-bs-parent="#accordionExample3">
-                                    <div class="accordion-body py-2">
-                                        <p class="fs-6 text-black mb-1 text-center machine-items" (click)="restore()">Todos</p>
-                                        <p class="fs-6 text-black mb-1 text-center machine-items" (click)="machinePick(machine)" *ngFor="let machine of machines">{{machine.name}} ({{machine.plate}})</p>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="col-6 px-1">
+                          <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Fecha:</mat-label>
+                            <input
+                              matInput
+                              [matDatepicker]="picker2"
+                              [max]="minDate"
+                              formControlName="end_date"
+                              (dateInput)="datePicker()"
+                            />
+                            <mat-datepicker-toggle matSuffix [for]="picker2"> </mat-datepicker-toggle>
+                            <mat-datepicker #picker2></mat-datepicker>
+                          </mat-form-field>
+                          <div class="ngx-timepicker-field-example">
+                            <ngx-timepicker-field
+                              [format]="24"
+                              [defaultTime]="'12:00'"
+                              formControlName="endTime"
+                              [controlOnly]="false"
+                            >
+                            </ngx-timepicker-field>
+                          </div>
                         </div>
-                    </div>
-
+                      </div>
+                      <div class="text-center mt-1">
+                        <button
+                          [disabled]="rangeDatePicker.invalid"
+                          style="border-radius: 20px"
+                          type="button"
+                          (click)="filterByDatePicker()"
+                        >
+                          <p class="mb-0" style="font-size: 15px">Filtrar</p>
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
-
+              </div>
             </div>
-        </div>
-        <div class="col-md-3 col-lg-3 d-flex justify-content-end" style="height: 90px;">
-            <button type="button" class="btn btn-main mt-4 px-4 py-0 d-flex align-items-center" style="height: 35px;" (click)="exportData()">
-                <p class="mb-0 text-white me-2" style="font-size: 18px;"><strong>Descargar reporte</strong> </p>
-                <img src="assets/images/download.svg" alt="" srcset="">
-            </button>
+          </div>
 
+          <div class="col-5">
+            <div class="col-6 accordion accordion-filters w-100" id="accordionExample3">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                  <button
+                    class="accordion-button collapsed p-2"
+                    id="btnAccordion3"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseThree"
+                    aria-expanded="true"
+                    aria-controls="collapseThree"
+                  >
+                    <p class="text-black mb-0 text-center w-100" style="font-size: 16px">
+                      <strong>{{ machinePicked ? machinePicked : ' Nro. de máquina o Patente' }}</strong>
+                    </p>
+                  </button>
+                </h2>
+                <div
+                  id="collapseThree"
+                  class="accordion-collapse collapse"
+                  aria-labelledby="headingThree"
+                  data-bs-parent="#accordionExample3"
+                >
+                  <div class="accordion-body py-2">
+                    <p class="fs-6 text-black mb-1 text-center machine-items" (click)="restore()">Todos</p>
+                    <p
+                      class="fs-6 text-black mb-1 text-center machine-items"
+                      (click)="machinePick(machine)"
+                      *ngFor="let machine of machines"
+                    >
+                      {{ machine.name }} ({{ machine.plate }})
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-
+    <div class="col-md-3 col-lg-3 d-flex justify-content-end" style="height: 90px">
+      <button
+        type="button"
+        class="btn btn-main mt-4 px-4 py-0 d-flex align-items-center"
+        style="height: 35px"
+        (click)="exportData()"
+      >
+        <p class="mb-0 text-white me-2" style="font-size: 18px"><strong>Descargar reporte</strong></p>
+        <img src="assets/images/download.svg" alt="" srcset="" />
+      </button>
+    </div>
+  </div>
 </div>
 
-<div class="main-container pb-5" id="htmlData" >
-
-      <div  class="row d-flex justify-content-evenly mb-4" style="padding-top: 90px;">
-          <div class="col-7 ">
-              <div class="row d-flex justify-content-between mt-3">
-                  <div class="col-3 p-3" style="box-shadow: 0px 0px 15px 5px #0acdff;border-radius: 10px;">
-                      <div class="d-flex align-items-lg-center">
-                          <img src="assets/images/Grupo 1770.svg" class="me-3" alt="" width="42px" srcset="">
-                          <p class="mb-0 text-black" style="font-size: 32px;"><strong *ngIf="totalPassengers">{{totalPassengers}}</strong> </p>
-                      </div>
-                      <p class="mb-0 text-black text-end">Total de pasajeros</p>
-                  </div>
-                  <div class="col-4 p-3" style="box-shadow: 0px 0px 15px 5px #0a53ff;border-radius: 10px;">
-                      <div class="d-flex align-items-lg-center">
-                          <img src="assets/images/Grupo 1607.svg" class="me-3" alt="" width="42px" srcset="">
-                          <p class="mb-0 text-black" style="font-size: 32px;"><strong *ngIf="averagePassengers">{{averagePassengers}}</strong> </p>
-                      </div>
-                      <p class="mb-0 text-black text-center">Promedio de pasajeros</p>
-                  </div>
-                  <div class="col-3 p-3" style="box-shadow: 0px 0px 15px 5px #ffb300;border-radius: 10px">
-                      <div class="d-flex align-items-lg-center">
-
-                          <img src="assets/images/Grupo 1769.svg" class="me-3" alt="" width="42px" srcset="">
-                          <p class="text-black mb-0" style="font-size: 32px;" *ngIf="totalMachines"><strong >{{totalMachines}}</strong> de {{machines.length}} </p>
-                      </div>
-                      <p class="mb-0 text-black text-center">Total de buses activos</p>
-                  </div>
-              </div>
-              <div class="row mt-5">
-                  <div class="col p-3" style="border: 1px solid #0ACDFF; border-radius:10px">
-                    <p class="mb-3 subtitles text-black"><strong>Subida de pasajeros</strong> </p>
-                    <div *ngIf="optionChart1">
-                        <div echarts [options]="optionChart1" style="width: 100%; height: 160px;"></div>
-                    </div>
-                  </div>
-
-              </div>
+<div class="main-container pb-5" id="htmlData">
+  <div class="row d-flex justify-content-evenly mb-4" style="padding-top: 90px">
+    <div class="col-7">
+      <div class="row d-flex justify-content-between mt-3">
+        <div class="col-3 p-3" style="box-shadow: 0px 0px 15px 5px #0acdff; border-radius: 10px">
+          <div class="d-flex align-items-lg-center">
+            <img src="assets/images/Grupo 1770.svg" class="me-3" alt="" width="42px" srcset="" />
+            <p class="mb-0 text-black" style="font-size: 32px">
+              <strong *ngIf="totalPassengers">{{ totalPassengers }}</strong>
+            </p>
           </div>
-          <div class="col-4 p-3" style="border: 1px solid #0ACDFF; border-radius:10px">
-            <p class="mb-2 subtitles text-black"><strong>Bajada de pasajeros</strong> </p>
-                    <div *ngIf="optionChart2">
-                        <div echarts [options]="optionChart2" style="width: 100%; height: 370px;"></div>
-                    </div>
+          <p class="mb-0 text-black text-end">Total de pasajeros</p>
+        </div>
+        <div class="col-4 p-3" style="box-shadow: 0px 0px 15px 5px #0a53ff; border-radius: 10px">
+          <div class="d-flex align-items-lg-center">
+            <img src="assets/images/Grupo 1607.svg" class="me-3" alt="" width="42px" srcset="" />
+            <p class="mb-0 text-black" style="font-size: 32px">
+              <strong *ngIf="averagePassengers">{{ averagePassengers }}</strong>
+            </p>
           </div>
+          <p class="mb-0 text-black text-center">Promedio de pasajeros</p>
+        </div>
+        <div class="col-3 p-3" style="box-shadow: 0px 0px 15px 5px #ffb300; border-radius: 10px">
+          <div class="d-flex align-items-lg-center">
+            <img src="assets/images/Grupo 1769.svg" class="me-3" alt="" width="42px" srcset="" />
+            <p class="text-black mb-0" style="font-size: 32px" *ngIf="totalMachines">
+              <strong>{{ totalMachines }}</strong> de {{ machines.length }}
+            </p>
+          </div>
+          <p class="mb-0 text-black text-center">Total de buses activos</p>
+        </div>
       </div>
-
-      <div class="row d-flex justify-content-evenly">
-          <div class="col-6 p-4" >
-            <div class="p-3" style="border: 1px solid #FFB300; border-radius:10px">
-                <p class="mb-1 subtitles text-black"><strong>Listado de buses operativos (Subidas)</strong> </p>
-
-                <app-table-general
-                    name="Buses Operativos (Subidas)"
-                    [fields]="geoZonesFieldsEnters"
-                    [items]="geoZonesEnters"
-                    (eventExportXLSX)="exportXLSX[0] = $event"
-                ></app-table-general>
-            </div>
+      <div class="row mt-5">
+        <div class="col p-3" style="border: 1px solid #0acdff; border-radius: 10px">
+          <p class="mb-3 subtitles text-black"><strong>Subida de pasajeros</strong></p>
+          <div *ngIf="optionChart1">
+            <div echarts [options]="optionChart1" style="width: 100%; height: 160px"></div>
           </div>
-
-          <div class="col-6 p-4" >
-            <div class="p-3" style="border: 1px solid #FFB300; border-radius:10px">
-                <p class="mb-1 subtitles text-black"><strong>Listado de buses operativos (Bajadas)</strong></p>
-
-                <app-table-general
-                    name="Buses Operativos (Bajadas)"
-                    [fields]="geoZonesFieldsExits"
-                    [items]="geoZonesExits"
-                    (eventExportXLSX)="exportXLSX[1] = $event"
-                ></app-table-general>
-            </div>
-          </div>
+        </div>
       </div>
+    </div>
+    <div class="col-4 p-3" style="border: 1px solid #0acdff; border-radius: 10px">
+      <p class="mb-2 subtitles text-black"><strong>Bajada de pasajeros</strong></p>
+      <div *ngIf="optionChart2">
+        <div echarts [options]="optionChart2" style="width: 100%; height: 370px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row d-flex justify-content-evenly">
+    <div class="col-6 p-4">
+      <div class="p-3" style="border: 1px solid #ffb300; border-radius: 10px">
+        <p class="mb-1 subtitles text-black"><strong>Listado de buses operativos (Subidas)</strong></p>
+
+        <app-table-general
+          name="Buses Operativos (Subidas)"
+          [fields]="geoZonesFieldsEnters"
+          [items]="geoZonesEnters"
+          (eventExportXLSX)="exportXLSX[0] = $event"
+        ></app-table-general>
+      </div>
+    </div>
+
+    <div class="col-6 p-4">
+      <div class="p-3" style="border: 1px solid #ffb300; border-radius: 10px">
+        <p class="mb-1 subtitles text-black"><strong>Listado de buses operativos (Bajadas)</strong></p>
+
+        <app-table-general
+          name="Buses Operativos (Bajadas)"
+          [fields]="geoZonesFieldsExits"
+          [items]="geoZonesExits"
+          (eventExportXLSX)="exportXLSX[1] = $event"
+        ></app-table-general>
+      </div>
+    </div>
+  </div>
 </div>

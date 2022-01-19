@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { TooltipPosition } from '@angular/material/tooltip';
+import { Component, OnInit } from '@angular/core'
+import { TooltipPosition } from '@angular/material/tooltip'
 
 @Component({
   selector: 'app-pages',
-  templateUrl: './pages.component.html',
+  templateUrl: './pages.component.html'
 })
 export class PagesComponent implements OnInit {
   constructor() {}

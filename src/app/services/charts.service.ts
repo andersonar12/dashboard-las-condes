@@ -1,64 +1,62 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { EChartsOption } from 'echarts';
-import * as echarts from 'echarts';
-import { environment } from '../../environments/environment';
-import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy, PromedioPasajeros } from '../interfaces/interfaces';
-import { Router, Event, NavigationStart, NavigationError } from '@angular/router';
+import { HttpClient, HttpParams } from '@angular/common/http'
+import { Injectable } from '@angular/core'
+import { EChartsOption } from 'echarts'
+import * as echarts from 'echarts'
+import { environment } from '../../environments/environment'
+import { TotalPasajeros, TotalPorDia, TotalPorHoraDeHoy, PromedioPasajeros } from '../interfaces/interfaces'
+import { Router, Event, NavigationStart, NavigationError } from '@angular/router'
 
-import { LiveGpsService } from '@SERVICES/liveGps.service';
+import { LiveGpsService } from '@SERVICES/liveGps.service'
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ChartsService {
-  public contadorApiUrl = environment.contadorApiUrl +'/api'
-  public plate!:string | undefined
+  public contadorApiUrl = environment.contadorApiUrl + '/api'
+  public plate!: string | undefined
   public totalBusesActive!: string | number
   public totalPassengersInWeek!: string | number
-  public averageRise:string = '0'
+  public averageRise: string = '0'
   /* public totalBusesInactive!: string | number */
 
-  constructor(private http: HttpClient,private router: Router, private resService: LiveGpsService) {
+  constructor(private http: HttpClient, private router: Router, private resService: LiveGpsService) {
     //Aqui podemos escuchar cuando se cambia de ruta en la aplicacion
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
-          this.plate = undefined
+        this.plate = undefined
       }
 
       /* if (event instanceof NavigationError) {
           // Present error to user
       } */
-  });
+    })
   }
 
   async setOptionsChartsPassengers() {
+    let data: any
 
-    let data:any
-
-    await Promise.all([this.getTotalPassengersByDay('this_week').toPromise()])
-      .then(([res])=>{
-        this.totalPassengersInWeek = res.reduce((prev, current) => prev + current.enters, 0)
-        data= res
-      })
+    await Promise.all([this.getTotalPassengersByDay('this_week').toPromise()]).then(([res]) => {
+      this.totalPassengersInWeek = res.reduce((prev, current) => prev + current.enters, 0)
+      data = res
+    })
 
     const options: EChartsOption = {
       xAxis: {
         type: 'category',
-        data: /* data.map((d:TotalPorDia)=> d.date.replace(`${new Date().getFullYear()}-`,'')) ,*/
-        ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'],
-        boundaryGap: false,
+        /* data.map((d:TotalPorDia)=> d.date.replace(`${new Date().getFullYear()}-`,'')) ,*/
+        data: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie'],
+        boundaryGap: false
       },
       yAxis: {
         type: 'value',
-        show: false,
+        show: false
       },
       grid: {
         /*           left: '3%',
             right: '4%',
             bottom: '2%', */
         top: 5,
-        height: '70px',
+        height: '70px'
       },
 
       tooltip: {
@@ -66,25 +64,25 @@ export class ChartsService {
         axisPointer: {
           type: 'cross',
           label: {
-            backgroundColor: '#283b56',
-          },
-        },
+            backgroundColor: '#283b56'
+          }
+        }
       },
       series: [
         {
           name: 'Subida',
-          data: data.map((d:TotalPorDia)=> d.enters)/* [0, 932, 901, 934, 450] */,
+          data: data.map((d: TotalPorDia) => d.enters) /* [0, 932, 901, 934, 450] */,
           type: 'line',
           smooth: true,
           symbolSize: 10,
           symbol: 'emptyCircle',
           itemStyle: {
-            color: '#0acdff',
+            color: '#0acdff'
           },
           lineStyle: {
-            color: '#0acdff',
-          },
-        },
+            color: '#0acdff'
+          }
+        }
         /* {
           name: 'Bajada',
           data: [0, 300, 800, 750, 400],
@@ -99,45 +97,45 @@ export class ChartsService {
             color: '#ffbb00',
           },
         }, */
-      ],
-    };
-    return options;
+      ]
+    }
+    return options
   }
 
   async setOptionsChartsBusesInRoute() {
+    let data: any
 
-    let data:any
-
-    const percentageCalculator = (amount:number , total:number,)=> {
+    const percentageCalculator = (amount: number, total: number) => {
       return ((amount * 100) / total).toFixed(2)
-   }
+    }
 
-    await Promise.all([this.getTotalActiveMachinesToday().toPromise(), this.resService.getDevicesGPS().toPromise()])
-          .then(([resp,resp2])=>{
-            let activeBuses = resp // arreglo por placas buses en recorrido o activos
-            let busFleet:Array<string> = resp2['data'].map((m)=>m.plate) //arreglo mapeado por placas de flota de buses (estacionados)
+    await Promise.all([
+      this.getTotalActiveMachinesToday().toPromise(),
+      this.resService.getDevicesGPS().toPromise()
+    ]).then(([resp, resp2]) => {
+      let activeBuses = resp // arreglo por placas buses en recorrido o activos
+      let busFleet: Array<string> = resp2['data'].map(m => m.plate) //arreglo mapeado por placas de flota de buses (estacionados)
 
-            let totalBusesActive = 0
-            let totalBusesInactive = busFleet.length
+      let totalBusesActive = 0
+      let totalBusesInactive = busFleet.length
 
-            activeBuses.forEach((bus)=>{
+      activeBuses.forEach(bus => {
+        const finded = busFleet.indexOf(bus)
+        if (finded >= 0) {
+          totalBusesActive = +1 //se suma uno a uno si el bus esta activo
+          totalBusesInactive-- //y lo restamos de los buses inactivos
+        }
+      })
 
-              const finded = busFleet.indexOf(bus)
-              if(finded >= 0){
-                totalBusesActive =+1 //se suma uno a uno si el bus esta activo
-                totalBusesInactive --//y lo restamos de los buses inactivos
-              }
-            })
+      this.totalBusesActive = totalBusesActive
+      /* this.totalBusesInactive = totalBusesInactive */
 
-            this.totalBusesActive = totalBusesActive
-            /* this.totalBusesInactive = totalBusesInactive */
+      //calculamos los porcentajes
+      let activePercentage = percentageCalculator(totalBusesActive, busFleet.length)
+      // let inactivePercentage= percentageCalculator(totalBusesInactive,busFleet.length)
 
-            //calculamos los porcentajes
-            let activePercentage = percentageCalculator(totalBusesActive,busFleet.length)
-            // let inactivePercentage= percentageCalculator(totalBusesInactive,busFleet.length)
-
-            data = {activePercentage,totalBusesActive,totalBusesInactive}
-          })
+      data = { activePercentage, totalBusesActive, totalBusesInactive }
+    })
 
     const options: EChartsOption = {
       title: [
@@ -148,15 +146,15 @@ export class ChartsService {
           textAlign: 'center',
           textStyle: {
             color: 'black',
-            fontSize: '15px',
-          },
-        },
+            fontSize: '15px'
+          }
+        }
       ],
       tooltip: {
-        trigger: 'item',
+        trigger: 'item'
       },
       legend: {
-        show: false,
+        show: false
       },
       series: [
         {
@@ -166,7 +164,7 @@ export class ChartsService {
           avoidLabelOverlap: false,
           label: {
             show: false,
-            position: 'center',
+            position: 'center'
           },
           /* emphasis: {
               label: {
@@ -176,51 +174,49 @@ export class ChartsService {
               }
             },*/
           labelLine: {
-            show: false,
+            show: false
           },
           data: [
             {
-              value:data['totalBusesActive'],
+              value: data['totalBusesActive'],
               name: 'Buses Activos',
               itemStyle: {
                 color: '#ffbb00'
-              },
+              }
             },
             {
               value: data['totalBusesInactive'],
               name: 'Buses Inactivos',
               itemStyle: {
-               color: '#0acdff',
+                color: '#0acdff'
               }
-            },
-          ],
-        },
-      ],
-    };
-    return options;
+            }
+          ]
+        }
+      ]
+    }
+    return options
   }
 
   async setOptionsChartsAverageRise() {
+    let data: any
 
-    let data:any
-
-    await Promise.all([this.getTotalPassengersByDay('this_week').toPromise()])
-      .then(([res])=>{
-        this.averageRise = '0'
-        if(res.length > 0){
-          this.averageRise = (res.reduce((prev, current) => prev + current.enters, 0) / res.length).toFixed(2)
-        }
-        data = res
-      })
+    await Promise.all([this.getTotalPassengersByDay('this_week').toPromise()]).then(([res]) => {
+      this.averageRise = '0'
+      if (res.length > 0) {
+        this.averageRise = (res.reduce((prev, current) => prev + current.enters, 0) / res.length).toFixed(2)
+      }
+      data = res
+    })
 
     const options: EChartsOption = {
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie','Sab','Dom'],
+        data: ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom']
       },
       yAxis: {
-        type: 'value',
+        type: 'value'
       },
       grid: {
         /*           left: '3%',
@@ -228,16 +224,16 @@ export class ChartsService {
             bottom: '2%',
             width:'100%', */
         top: 6,
-        height: '120px',
+        height: '120px'
       },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'cross',
           label: {
-            backgroundColor: '#283b56',
-          },
-        },
+            backgroundColor: '#283b56'
+          }
+        }
       },
       series: [
         {
@@ -247,7 +243,7 @@ export class ChartsService {
           smooth: false,
           lineStyle: {
             width: 2,
-            color: '#0a77fe',
+            color: '#0a77fe'
           },
           showSymbol: true,
           areaStyle: {
@@ -255,51 +251,56 @@ export class ChartsService {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               {
                 offset: 0,
-                color: '#0a77fe',
+                color: '#0a77fe'
               },
               {
                 offset: 1,
-                color: '#ffffff',
-              },
-            ]),
+                color: '#ffffff'
+              }
+            ])
           },
           emphasis: {
-            focus: 'series',
+            focus: 'series'
           },
-          data: data.map((d:TotalPorDia)=> d.enters),
-        },
-      ],
-    };
-    return options;
+          data: data.map((d: TotalPorDia) => d.enters)
+        }
+      ]
+    }
+    return options
   }
 
-  async setOptionsChartsBoardingPassengers(date?:'this_week'|'this_month',start_date?:string,end_date?:string ) {
-
-    let dataX:any
-    let dataY:any
+  async setOptionsChartsBoardingPassengers(date?: 'this_week' | 'this_month', start_date?: string, end_date?: string) {
+    let dataX: any
+    let dataY: any
 
     /* let mapCustom = (data:any,funct:Function) => {
       return data.map(funct)
     }
  */
-    if (date) { // para obtener total pasajeros por dia de la semana o mes
-      await this.getTotalPassengersByDay(date,'enter').toPromise().then((resp)=>{
-        dataX = resp.map((i:any)=>i.date)
-        dataY = resp.map((i:any)=>i.enters)
-      })
-
-    } else if(start_date && end_date){ // para obtener total pasajeros por rango de fecha
-      await this.getTotalPassengersByDayByRange(start_date, end_date,'enter').toPromise().then((resp)=>{
-        dataX = resp.map((i:any)=>i.date)
-        dataY = resp.map((i:any)=>i.enters)
-      })
-    }
-    else { //total pasajeros por hora de hoy
-      await this.getTotalPassengersByTimeToday('enter').toPromise().then((resp)=>{
-        dataX = resp.map((i:any)=>i.hour+':00')
-        dataY = resp.map((i:any)=>i.pasajeros)
-      })
-
+    if (date) {
+      // para obtener total pasajeros por dia de la semana o mes
+      await this.getTotalPassengersByDay(date, 'enter')
+        .toPromise()
+        .then(resp => {
+          dataX = resp.map((i: any) => i.date)
+          dataY = resp.map((i: any) => i.enters)
+        })
+    } else if (start_date && end_date) {
+      // para obtener total pasajeros por rango de fecha
+      await this.getTotalPassengersByDayByRange(start_date, end_date, 'enter')
+        .toPromise()
+        .then(resp => {
+          dataX = resp.map((i: any) => i.date)
+          dataY = resp.map((i: any) => i.enters)
+        })
+    } else {
+      //total pasajeros por hora de hoy
+      await this.getTotalPassengersByTimeToday('enter')
+        .toPromise()
+        .then(resp => {
+          dataX = resp.map((i: any) => i.hour + ':00')
+          dataY = resp.map((i: any) => i.pasajeros)
+        })
     }
 
     const options: EChartsOption = {
@@ -323,10 +324,10 @@ export class ChartsService {
           '18:00',
           '19:00',
           '20:00',
-        ] */,
+        ] */
       },
       yAxis: {
-        type: 'value',
+        type: 'value'
       },
       grid: {
         /*           left: '3%',
@@ -336,16 +337,16 @@ export class ChartsService {
         width: '95%',
         left: 30,
         top: 6,
-        height: '120px',
+        height: '120px'
       },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'cross',
           label: {
-            backgroundColor: '#283b56',
-          },
-        },
+            backgroundColor: '#283b56'
+          }
+        }
       },
       series: [
         {
@@ -355,77 +356,87 @@ export class ChartsService {
           smooth: false,
           lineStyle: {
             width: 1,
-            color: '#0762FF',
+            color: '#0762FF'
           },
           showSymbol: true,
           symbolSize: 10,
           symbol: 'emptyCircle',
           itemStyle: {
             borderWidth: 1,
-            color: '#0762FF',
+            color: '#0762FF'
           },
           areaStyle: {
             opacity: 0.8,
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               {
                 offset: 0,
-                color: '#0762FF',
+                color: '#0762FF'
               },
               {
                 offset: 1,
-                color: '#ffffff',
-              },
-            ]),
+                color: '#ffffff'
+              }
+            ])
           },
           emphasis: {
-            focus: 'series',
+            focus: 'series'
           },
-          data: dataY/* [
+          data: dataY /* [
             140, 232, 222, 264, 290, 340, 250, 300, 300, 260, 160, 190, 220,
             310, 290, 260,
           ] */
-        },
-      ],
-    };
-    return options;
+        }
+      ]
+    }
+    return options
   }
 
-  async setOptionsChartsBarDisembarkationPassengers(date?:'this_week'|'this_month',start_date?:string,end_date?:string) {
+  async setOptionsChartsBarDisembarkationPassengers(
+    date?: 'this_week' | 'this_month',
+    start_date?: string,
+    end_date?: string
+  ) {
+    let dataX: any
+    let dataY: any
 
-    let dataX:any
-    let dataY:any
-
-    if (date) { // para obtener total pasajeros por dia de la semana o mes
-      await this.getTotalPassengersByDay(date,'exit').toPromise().then((resp)=>{
-        dataX = resp.map((i:any)=>i.date)
-        dataY = resp.map((i:any)=>i.enters)
-      })
-
-    } else if(start_date && end_date){ // para obtener total pasajeros por rango de fecha
-      await this.getTotalPassengersByDayByRange(start_date, end_date,'exit').toPromise().then((resp)=>{
-        dataX = resp.map((i:any)=>i.date)
-        dataY = resp.map((i:any)=>i.enters)
-      })
-    }
-    else { //total pasajeros por hora de hoy
-      await this.getTotalPassengersByTimeToday('exit').toPromise().then((resp)=>{
-        dataX = resp.map((i:any)=>i.hour+':00')
-        dataY = resp.map((i:any)=>i.pasajeros)
-      })
+    if (date) {
+      // para obtener total pasajeros por dia de la semana o mes
+      await this.getTotalPassengersByDay(date, 'exit')
+        .toPromise()
+        .then(resp => {
+          dataX = resp.map((i: any) => i.date)
+          dataY = resp.map((i: any) => i.enters)
+        })
+    } else if (start_date && end_date) {
+      // para obtener total pasajeros por rango de fecha
+      await this.getTotalPassengersByDayByRange(start_date, end_date, 'exit')
+        .toPromise()
+        .then(resp => {
+          dataX = resp.map((i: any) => i.date)
+          dataY = resp.map((i: any) => i.enters)
+        })
+    } else {
+      //total pasajeros por hora de hoy
+      await this.getTotalPassengersByTimeToday('exit')
+        .toPromise()
+        .then(resp => {
+          dataX = resp.map((i: any) => i.hour + ':00')
+          dataY = resp.map((i: any) => i.pasajeros)
+        })
     }
 
     const options: EChartsOption = {
       xAxis: {
         data: dataX,
-        show: true,
+        show: true
       },
       yAxis: {
         axisLine: {
-          show: false,
+          show: false
         },
         axisTick: {
-          show: false,
-        },
+          show: false
+        }
       },
       grid: {
         /*           left: '3%',
@@ -435,16 +446,16 @@ export class ChartsService {
         width: '95%',
         left: 30,
         top: 6,
-        height: '340px',
+        height: '340px'
       },
       tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'cross',
           label: {
-            backgroundColor: '#283b56',
-          },
-        },
+            backgroundColor: '#283b56'
+          }
+        }
       },
       series: [
         {
@@ -454,38 +465,37 @@ export class ChartsService {
           itemStyle: {
             color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
               { offset: 0, color: '#0A53FF' },
-              { offset: 1, color: '#001954' },
-            ]),
+              { offset: 1, color: '#001954' }
+            ])
           },
           emphasis: {
             itemStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 { offset: 0, color: '#2378f7' },
                 { offset: 0.7, color: '#0A53FF' },
-                { offset: 1, color: '#001954' },
-              ]),
-            },
+                { offset: 1, color: '#001954' }
+              ])
+            }
           },
-          data: dataY,
-        },
-      ],
-    };
+          data: dataY
+        }
+      ]
+    }
 
-    return options;
+    return options
   }
 
   ///////////////////////////////PETICIONES/////////////////////////////////////////
 
   //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
-  getTotalPassengers(date:'today'|'this_week'|'this_month') {
+  getTotalPassengers(date: 'today' | 'this_week' | 'this_month') {
+    const endpoint = `${this.contadorApiUrl}/total_passengers`
 
-    const endpoint = `${this.contadorApiUrl}/total_passengers`;
-
-    let obj:any = {}
+    let obj: any = {}
 
     obj['date'] = date
     obj['event_type'] = 'enter'
-    if (this.plate)  obj['plate'] = this.plate
+    if (this.plate) obj['plate'] = this.plate
 
     let params = new HttpParams({ fromObject: obj })
 
@@ -493,115 +503,109 @@ export class ChartsService {
   }
 
   getTotalPassengersByRangeDate(start_date: string, end_date: string) {
+    const endpoint = `${this.contadorApiUrl}/total_passengers`
 
-    const endpoint = `${this.contadorApiUrl}/total_passengers`;
-
-    let obj:any= {}
+    let obj: any = {}
 
     obj['start_date'] = start_date
     obj['end_date'] = end_date
     obj['event_type'] = 'enter'
 
-    if (this.plate)  obj['plate'] = this.plate
+    if (this.plate) obj['plate'] = this.plate
 
     let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<TotalPasajeros>(endpoint, { params })
   }
-//Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
+  //Puede servir para obtener cantidad de pasajeros de acuerdo a (hoy, de la semana, del mes) se obtiene un total
 
-  getTotalPassengersByTimeToday(event_type?:'enter'|'exit') {//Este da como resultado un array por horas
+  getTotalPassengersByTimeToday(event_type?: 'enter' | 'exit') {
+    //Este da como resultado un array por horas
 
-    const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
+    const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`
 
-    let obj:any= {}
+    let obj: any = {}
 
     obj['date'] = 'today'
 
-    if (this.plate)  obj['plate'] = this.plate
-    if (event_type)  obj['event_type'] = event_type
+    if (this.plate) obj['plate'] = this.plate
+    if (event_type) obj['event_type'] = event_type
 
     let params = new HttpParams({ fromObject: obj })
 
-    return this.http.get<TotalPorHoraDeHoy[]>(endpoint, { params })//Este da como resultado un array por horas
+    return this.http.get<TotalPorHoraDeHoy[]>(endpoint, { params }) //Este da como resultado un array por horas
   }
 
-  getTotalPassengersByDay(date:'today'|'this_week'|'this_month',event_type?:'enter'|'exit') {
+  getTotalPassengersByDay(date: 'today' | 'this_week' | 'this_month', event_type?: 'enter' | 'exit') {
+    const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`
 
-    const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
-
-    let obj:any= {}
+    let obj: any = {}
 
     obj['date'] = date
 
-    if (this.plate)  obj['plate'] = this.plate
-    if (event_type)  obj['event_type'] = event_type
+    if (this.plate) obj['plate'] = this.plate
+    if (event_type) obj['event_type'] = event_type
 
-    let params = new HttpParams({fromObject: obj })
+    let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<TotalPorDia[]>(endpoint, { params })
   }
 
-  getTotalPassengersByDayByRange(start_date:string,end_date:string,event_type?:'enter'|'exit') {
+  getTotalPassengersByDayByRange(start_date: string, end_date: string, event_type?: 'enter' | 'exit') {
+    const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`
 
-    const endpoint = `${this.contadorApiUrl}/total_passengers_by_day`;
-
-    let obj:any= {}
+    let obj: any = {}
 
     obj['start_date'] = start_date
     obj['end_date'] = end_date
 
-    if (this.plate)  obj['plate'] = this.plate
-    if (event_type)  obj['event_type'] = event_type
+    if (this.plate) obj['plate'] = this.plate
+    if (event_type) obj['event_type'] = event_type
 
-    let params = new HttpParams({fromObject: obj })
+    let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<TotalPorDia[]>(endpoint, { params })
   }
-
 
   /* Para obtener Promedio de Pasajeros */
 
   getAveragePassengersByTimeToday() {
+    const endpoint = `${this.contadorApiUrl}/avg_passengers`
 
-    const endpoint = `${this.contadorApiUrl}/avg_passengers`;
+    let obj: any = {}
 
-    let obj:any= {}
-
-    obj['date'] ='today'
+    obj['date'] = 'today'
     obj['event_type'] = 'enter'
-    if (this.plate)  obj['plate'] = this.plate
+    if (this.plate) obj['plate'] = this.plate
 
     let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<PromedioPasajeros[]>(endpoint, { params })
   }
 
-  getAveragePassengersByDay(date:'today'|'this_week'|'this_month') {
+  getAveragePassengersByDay(date: 'today' | 'this_week' | 'this_month') {
+    const endpoint = `${this.contadorApiUrl}/avg_passengers`
 
-    const endpoint = `${this.contadorApiUrl}/avg_passengers`;
-
-    let obj:any= {}
+    let obj: any = {}
 
     obj['date'] = date
     obj['event_type'] = 'enter'
-    if (this.plate)  obj['plate'] = this.plate
+    if (this.plate) obj['plate'] = this.plate
 
     let params = new HttpParams({ fromObject: obj })
 
     return this.http.get<PromedioPasajeros[]>(endpoint, { params })
   }
 
-  getAveragePassengersByDayByRange(start_date:string,end_date:string) {
+  getAveragePassengersByDayByRange(start_date: string, end_date: string) {
+    const endpoint = `${this.contadorApiUrl}/avg_passengers`
 
-    const endpoint = `${this.contadorApiUrl}/avg_passengers`;
-
-    let obj:any= {}
+    let obj: any = {}
 
     obj['start_date'] = start_date
     obj['end_date'] = end_date
     obj['event_type'] = 'enter'
-    if (this.plate)  obj['plate'] = this.plate
+    if (this.plate) obj['plate'] = this.plate
 
     let params = new HttpParams({ fromObject: obj })
 
@@ -611,9 +615,10 @@ export class ChartsService {
 
   /* Obtener Buses activos  */
 
-  getTotalActiveMachinesToday() {//Este da como resultado un array  de buses activo por placa
+  getTotalActiveMachinesToday() {
+    //Este da como resultado un array  de buses activo por placa
 
-    const endpoint = `${this.contadorApiUrl}/active_vehicles`;
+    const endpoint = `${this.contadorApiUrl}/active_vehicles`
     let params = new HttpParams().set('date', 'today')
 
     return this.http.get<string[]>(endpoint, { params })

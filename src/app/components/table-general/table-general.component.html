@@ -17,8 +17,8 @@
 
           <ng-template #geozone>
             <td mat-cell *matCellDef="let element">
-              <p class="mb-0" style="font-size: 18px">{{ element[field.key] | geozone:'code' }}</p>
-              <p class="mb-0" style="font-size: 12px">{{ element[field.key] | geozone:'name' }}</p>
+              <p class="mb-0" style="font-size: 18px">{{ element[field.key] | geozone: 'code' }}</p>
+              <p class="mb-0" style="font-size: 12px">{{ element[field.key] | geozone: 'name' }}</p>
             </td>
           </ng-template>
 

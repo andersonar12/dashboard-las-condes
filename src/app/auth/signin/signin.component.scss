@@ -1,17 +1,17 @@
 .background {
-  background-image: url("/assets/images/login-background.png");
+  background-image: url('/assets/images/login-background.png');
   background-position: center;
   background-repeat: no-repeat;
-  background-size:cover;
+  background-size: cover;
 }
 
 ::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
-  background-color: rgb(255 255 255 / 4%)!important;
+  background-color: rgb(255 255 255 / 4%) !important;
 }
 
 ::ng-deep .mat-form-field-infix {
-  margin-left: 20px
+  margin-left: 20px;
 }
-mat-icon{
-  font-size: 30px!important;
+mat-icon {
+  font-size: 30px !important;
 }
