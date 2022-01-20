@@ -1,5 +1,5 @@
 type TResponseError = {
-  error: string
+  message: string
   status: number
 }
 
@@ -65,7 +65,6 @@ type TSingUp = TLogin & {
 
 type TUser = {
   email: string
-  password: string
   token: string
 }
 

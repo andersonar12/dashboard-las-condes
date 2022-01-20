@@ -84,10 +84,7 @@ export class StatisticsComponent implements OnInit {
         this.machines = data
         res.closeLoader()
       },
-      err => {
-        console.error(err)
-        res.closeLoader()
-      }
+      () => res.closeLoader()
     )
 
     this.optionChart1 = await this.charts.setOptionsChartsBoardingPassengers()

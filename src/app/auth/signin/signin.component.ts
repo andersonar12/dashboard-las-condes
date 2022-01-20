@@ -37,7 +37,7 @@ export class SigninComponent implements OnInit {
 
     try {
       await this.authService.signIn(login)
-      this.router.navigateByUrl('/pages/home')
+      await this.router.navigateByUrl('/pages/home')
     } catch (errorMessage) {
       alert('ERROR: ' + errorMessage)
       this.formGroup.reset()

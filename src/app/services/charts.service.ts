@@ -293,6 +293,7 @@ export class ChartsService {
           dataX = resp.map((i: any) => i.date)
           dataY = resp.map((i: any) => i.enters)
         })
+        .catch(() => null)
     } else {
       //total pasajeros por hora de hoy
       await this.getTotalPassengersByTimeToday('enter')
@@ -301,6 +302,7 @@ export class ChartsService {
           dataX = resp.map((i: any) => i.hour + ':00')
           dataY = resp.map((i: any) => i.pasajeros)
         })
+        .catch(() => null)
     }
 
     const options: EChartsOption = {
@@ -407,6 +409,7 @@ export class ChartsService {
           dataX = resp.map((i: any) => i.date)
           dataY = resp.map((i: any) => i.enters)
         })
+        .catch(() => null)
     } else if (start_date && end_date) {
       // para obtener total pasajeros por rango de fecha
       await this.getTotalPassengersByDayByRange(start_date, end_date, 'exit')
@@ -415,6 +418,7 @@ export class ChartsService {
           dataX = resp.map((i: any) => i.date)
           dataY = resp.map((i: any) => i.enters)
         })
+        .catch(() => null)
     } else {
       //total pasajeros por hora de hoy
       await this.getTotalPassengersByTimeToday('exit')
@@ -423,6 +427,7 @@ export class ChartsService {
           dataX = resp.map((i: any) => i.hour + ':00')
           dataY = resp.map((i: any) => i.pasajeros)
         })
+        .catch(() => null)
     }
 
     const options: EChartsOption = {

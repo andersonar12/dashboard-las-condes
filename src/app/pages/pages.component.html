@@ -22,8 +22,7 @@
         routerLinkActive="nav-active"
         class="my-3 btn-navbar"
         width="50px"
-        alt=""
-        srcset=""
+        alt="Icono de casa"
       />
       <img
         src="assets/images/Componente 18 – 8.svg"
@@ -31,19 +30,19 @@
         routerLinkActive="nav-active"
         class="my-3 btn-navbar"
         width="50px"
-        alt=""
+        alt="Icono de estadísticas"
       />
     </div>
 
     <div class="text-center w-100">
       <img
         src="assets/images/log-out.svg"
-        class="my-4 logout"
         matTooltip="Cerrar Sesión"
         [matTooltipPosition]="'right'"
-        alt=""
         routerLink="/auth/signin"
-        srcset=""
+        class="my-4 logout"
+        alt="Icono de cerrar sesión"
+        (click)="authService.logOut()"
       />
     </div>
   </div>

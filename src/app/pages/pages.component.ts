@@ -1,12 +1,11 @@
-import { Component, OnInit } from '@angular/core'
-import { TooltipPosition } from '@angular/material/tooltip'
+import { Component } from '@angular/core'
+
+import { AuthService } from '@SERVICES/auth.service'
 
 @Component({
   selector: 'app-pages',
   templateUrl: './pages.component.html'
 })
-export class PagesComponent implements OnInit {
-  constructor() {}
-
-  ngOnInit(): void {}
+export class PagesComponent {
+  constructor(public authService: AuthService) {}
 }

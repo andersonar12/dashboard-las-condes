@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import { map } from 'rxjs/operators'
+import { Router } from '@angular/router'
 
 import { ResponseAuthLiveGps } from '@ENTITIES/interfaces'
 import { environment } from '@ENV'
@@ -16,37 +16,31 @@ export class AuthService {
     Accept: '*/*'
   })
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   public async signIn(user: TLogin): Promise<void | string> {
-    const endpoint = `${contadorApiUrl}/users/signin`
+    const endpoint = `${contadorApiUrl}/api/users/signin`
     const body: TBodyAforo['signIn'] = { user }
 
     try {
-      // TODO: descomentar esta porcion de codigo cuando se solucione el error 404 desde el backend
-      // const { token } = await this.http
-      //   .post<TResponseAforo['signIn']>(endpoint, body, {
-      //     headers: this.headers,
-      //     withCredentials: true
-      //   })
-      //   .toPromise()
-      // ________________________________________
-      let token = 'OK'
+      const { token } = await this.http
+        .post<TResponseAforo['signIn']>(endpoint, JSON.stringify(body), {
+          headers: this.headers,
+          withCredentials: true
+        })
+        .toPromise()
 
       if (token) {
-        localStorage.setItem('user', JSON.stringify(<TUser>{ ...body.user, token }))
+        localStorage.setItem('user', JSON.stringify(<TUser>{ email: user.email, token }))
         await this.signInGPS()
       }
     } catch (error) {
       localStorage.removeItem('user')
       const { status } = error as TResponseError
-      let message = ''
+      let message = 'Server request error' // Mensaje por defecto
 
+      // Se crea un mensaje de error amigable al usuario
       switch (status) {
-        case 404: {
-          message = 'Usuario no encontrado'
-          break
-        }
         case 401: {
           message = 'Usuario no autorizado'
           break
@@ -73,7 +67,7 @@ export class AuthService {
   }
 
   // public async signUp(user: TSingUp): Promise<void | Error> {
-  //   const endpoint = `${liveGpsApiUrl}/users/signup`
+  //   const endpoint = `${contadorApiUrl}/api/users/signup`
   //   const body: TBodyAforo['signUp'] = { user }
 
   //   try {
@@ -90,8 +84,14 @@ export class AuthService {
   //   }
   // }
 
-  public logOut(): void {
+  public async logOut({ sessionExpired } = { sessionExpired: false }): Promise<void> {
     localStorage.removeItem('user')
     localStorage.removeItem('tokenLiveGPS')
+
+    if (sessionExpired && this.router.url !== '/auth/signin') {
+      alert('INFO: Su sesión ha expirado, ingrese nuevamente sus credenciales')
+    }
+
+    await this.router.navigateByUrl('/')
   }
 }
